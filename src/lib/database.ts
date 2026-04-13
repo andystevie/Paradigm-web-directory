@@ -34,6 +34,7 @@ export async function getAllEmployees(): Promise<Employee[]> {
       department: emp.department || undefined,
       photoUrl: emp.photoUrl || undefined,
       avatarUrl: emp.avatarUrl || undefined,
+      region: emp.region || undefined,
     }))
   } catch (error) {
     console.error('Error reading employees:', error)
