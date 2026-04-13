@@ -1,7 +1,7 @@
-import { defineConfig, env } from "prisma/config";
+import { defineConfig } from "prisma/config";
 import { config } from "dotenv";
 
-// Load environment variables from .env
+// Load environment variables from .env (local dev only)
 config({ path: ".env" });
 
 export default defineConfig({
@@ -11,6 +11,6 @@ export default defineConfig({
   },
   engine: "classic",
   datasource: {
-    url: env("POSTGRES_PRISMA_URL"),
+    url: process.env.POSTGRES_PRISMA_URL || "postgresql://placeholder:placeholder@localhost:5432/placeholder",
   },
 });
