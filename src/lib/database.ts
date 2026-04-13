@@ -16,7 +16,7 @@ export async function getAllEmployees(): Promise<Employee[]> {
         { lastName: 'asc' },
         { firstName: 'asc' }
       ]
-    })
+    }) as any[]
 
     // Map Prisma model to Employee type
     return employees.map(emp => ({

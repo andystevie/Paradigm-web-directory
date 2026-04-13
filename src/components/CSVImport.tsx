@@ -100,19 +100,19 @@ export default function CSVImport({ onImportComplete, onClose }: CSVImportProps)
         <div className="p-6 border-b border-gray-100/50">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-heaton rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-phh rounded-xl flex items-center justify-center">
                 <CloudArrowUpIcon className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-heaton-gray font-heading">Import Nextiva Data</h2>
-                <p className="text-sm text-heaton-gray-light">Upload CSV export from Nextiva</p>
+                <h2 className="text-xl font-bold text-phh-gray font-heading">Import CSV Data</h2>
+                <p className="text-sm text-phh-gray-light">Upload a CSV file with employee data</p>
               </div>
             </div>
             <button
               onClick={onClose}
               className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
             >
-              <XCircleIcon className="w-6 h-6 text-heaton-gray-light" />
+              <XCircleIcon className="w-6 h-6 text-phh-gray-light" />
             </button>
           </div>
         </div>
@@ -123,8 +123,8 @@ export default function CSVImport({ onImportComplete, onClose }: CSVImportProps)
             <div
               className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-all duration-300 ${
                 dragActive
-                  ? 'border-heaton-blue bg-blue-50/50'
-                  : 'border-gray-300 hover:border-heaton-blue hover:bg-blue-50/30'
+                  ? 'border-phh-purple bg-blue-50/50'
+                  : 'border-gray-300 hover:border-phh-purple hover:bg-blue-50/30'
               }`}
               onDragEnter={handleDrag}
               onDragLeave={handleDrag}
@@ -142,21 +142,21 @@ export default function CSVImport({ onImportComplete, onClose }: CSVImportProps)
 
               <div className="space-y-4">
                 <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center mx-auto">
-                  <DocumentTextIcon className="w-8 h-8 text-heaton-blue" />
+                  <DocumentTextIcon className="w-8 h-8 text-phh-purple" />
                 </div>
 
                 {importing ? (
                   <div className="space-y-2">
-                    <div className="w-8 h-8 border-4 border-heaton-blue border-t-transparent rounded-full animate-spin mx-auto"></div>
-                    <p className="text-heaton-gray font-medium">Processing CSV file...</p>
+                    <div className="w-8 h-8 border-4 border-phh-purple border-t-transparent rounded-full animate-spin mx-auto"></div>
+                    <p className="text-phh-gray font-medium">Processing CSV file...</p>
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    <p className="text-lg font-semibold text-heaton-gray">
+                    <p className="text-lg font-semibold text-phh-gray">
                       Drop your CSV file here or click to browse
                     </p>
-                    <p className="text-sm text-heaton-gray-light">
-                      Supports CSV exports from Nextiva with user, team, and number data
+                    <p className="text-sm text-phh-gray-light">
+                      Supports CSV files with employee name, team, and location data
                     </p>
                   </div>
                 )}
@@ -228,16 +228,16 @@ export default function CSVImport({ onImportComplete, onClose }: CSVImportProps)
               {/* Preview */}
               {result.success && result.data.length > 0 && (
                 <div className="bg-gray-50/50 rounded-xl p-4">
-                  <p className="font-semibold text-heaton-gray mb-3">Data Preview</p>
+                  <p className="font-semibold text-phh-gray mb-3">Data Preview</p>
                   <div className="space-y-2 max-h-32 overflow-y-auto">
                     {result.data.slice(0, 3).map((user, index) => (
                       <div key={index} className="flex items-center justify-between text-sm bg-white p-2 rounded-lg">
                         <span className="font-medium">{user.firstName} {user.lastName}</span>
-                        <span className="text-heaton-gray-light">{user.team} • {user.location}</span>
+                        <span className="text-phh-gray-light">{user.team} • {user.location}</span>
                       </div>
                     ))}
                     {result.data.length > 3 && (
-                      <p className="text-xs text-heaton-gray-light text-center">
+                      <p className="text-xs text-phh-gray-light text-center">
                         +{result.data.length - 3} more employees
                       </p>
                     )}
@@ -249,15 +249,15 @@ export default function CSVImport({ onImportComplete, onClose }: CSVImportProps)
 
           {/* Instructions */}
           <div className="bg-blue-50/50 rounded-xl p-4">
-            <p className="font-semibold text-heaton-blue mb-2">CSV Format Requirements</p>
-            <ul className="text-sm text-heaton-gray space-y-1">
+            <p className="font-semibold text-phh-purple mb-2">CSV Format Requirements</p>
+            <ul className="text-sm text-phh-gray space-y-1">
               <li>• <strong>Required:</strong> Name (full name in single column)</li>
               <li>• <strong>Recommended:</strong> Team/Group, Location/Office</li>
               <li>• <strong>Optional:</strong> Email, Extension, DID, Department, Job Title</li>
             </ul>
             <button
               onClick={downloadSample}
-              className="mt-3 text-sm text-heaton-blue hover:text-heaton-blue-dark font-medium underline"
+              className="mt-3 text-sm text-phh-purple hover:text-phh-purple-dark font-medium underline"
             >
               Download sample CSV template
             </button>
@@ -273,7 +273,7 @@ export default function CSVImport({ onImportComplete, onClose }: CSVImportProps)
                 fileInputRef.current.value = ''
               }
             }}
-            className="btn-modern bg-gray-100 text-heaton-gray hover:bg-gray-200"
+            className="btn-modern bg-gray-100 text-phh-gray hover:bg-gray-200"
             disabled={importing}
           >
             Try Another File
@@ -282,14 +282,14 @@ export default function CSVImport({ onImportComplete, onClose }: CSVImportProps)
           <div className="flex items-center space-x-3">
             <button
               onClick={onClose}
-              className="btn-modern bg-gray-100 text-heaton-gray hover:bg-gray-200"
+              className="btn-modern bg-gray-100 text-phh-gray hover:bg-gray-200"
             >
               Cancel
             </button>
             {result?.success && (
               <button
                 onClick={handleImport}
-                className="btn-modern bg-gradient-heaton text-white hover:shadow-modern-lg"
+                className="btn-modern bg-gradient-phh text-white hover:shadow-modern-lg"
               >
                 Import {result.data.length} Employees
               </button>

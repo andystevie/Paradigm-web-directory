@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Load current employees from database
-    const currentEmployees = await prisma.employee.findMany()
+    const currentEmployees: Employee[] = (await prisma.employee.findMany()) as unknown as Employee[]
     const employeeMap = new Map(currentEmployees.map(e => [e.id, e]))
 
     // Create version snapshot BEFORE applying changes

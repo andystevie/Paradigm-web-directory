@@ -320,7 +320,7 @@ export default function UserManagement({ currentUserRole }: UserManagementProps)
                   type="email"
                   value={newUser.email}
                   onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-                  placeholder="john.doe@heatoneye.com"
+                  placeholder="john.doe@paradigmhh.com"
                   style={{
                     width: '100%',
                     padding: '10px',

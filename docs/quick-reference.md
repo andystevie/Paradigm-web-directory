@@ -1,6 +1,6 @@
-# Heaton Eye Admin Portal - Quick Reference Guide
+# Paradigm Home Health Admin Portal - Quick Reference Guide
 
-**Portal URL:** https://staff.heatoneye.com/admin
+**Portal URL:** https://directory.paradigmhh.com/admin
 
 ---
 
@@ -38,7 +38,7 @@
 1. **EDITOR** submits change → Status: Pending Review
 2. **APPROVER** reviews → Approves or Rejects
 3. If approved → Status: Ready to Publish
-4. **SUPER ADMIN** publishes → Live on staff.heatoneye.com
+4. **SUPER ADMIN** publishes → Live on directory.paradigmhh.com
 
 ---
 
@@ -119,9 +119,9 @@
 
 | Purpose | URL |
 |---------|-----|
-| Admin Portal | https://staff.heatoneye.com/admin |
-| Login Page | https://staff.heatoneye.com/admin/login |
-| Public Directory | https://staff.heatoneye.com |
+| Admin Portal | https://directory.paradigmhh.com/admin |
+| Login Page | https://directory.paradigmhh.com/admin/login |
+| Public Directory | https://directory.paradigmhh.com |
 
 ---
 
@@ -137,7 +137,7 @@
 
 ## Support
 
-📧 **Email:** tickets@heatoneye.com
+📧 **Email:** support@paradigmhh.com
 
 For technical support or questions about the admin portal, contact the support team.
 

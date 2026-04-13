@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Heaton Eye Staff Directory — Layout & Cards
+   Paradigm Home Health — Directory Layout & Cards
    ========================================================================== */
 
 /* ==========================================================================
@@ -24,14 +24,14 @@
   gap: 12px;
   margin-bottom: 20px;
   padding-bottom: 12px;
-  border-bottom: 2px solid var(--heaton-blue-pale);
+  border-bottom: 2px solid var(--phh-purple-pale);
 }
 
 .location-section-title {
-  font-family: var(--font-heading), 'Roboto Condensed', sans-serif;
+  font-family: var(--font-heading), 'Open Sans', sans-serif;
   font-size: 22px;
   font-weight: 600;
-  color: var(--heaton-navy);
+  color: var(--phh-purple-deep);
   letter-spacing: 0.01em;
 }
 
@@ -94,11 +94,11 @@
   height: 56px;
   border-radius: 50%;
   flex-shrink: 0;
-  background: linear-gradient(135deg, var(--heaton-blue) 0%, var(--heaton-navy) 100%);
+  background: linear-gradient(135deg, var(--phh-purple) 0%, var(--phh-purple-deep) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-heading), 'Roboto Condensed', sans-serif;
+  font-family: var(--font-heading), 'Open Sans', sans-serif;
   font-size: 18px;
   font-weight: 600;
   color: white;
@@ -112,7 +112,7 @@
 }
 
 .employee-name {
-  font-family: var(--font-heading), 'Roboto Condensed', sans-serif;
+  font-family: var(--font-heading), 'Open Sans', sans-serif;
   font-size: 16px;
   font-weight: 600;
   color: var(--text-primary);
@@ -157,19 +157,19 @@
 .employee-detail-item--extension {
   font-size: 14px;
   font-weight: 600;
-  color: var(--heaton-navy);
+  color: var(--phh-purple-deep);
   letter-spacing: 0.01em;
 }
 
 .employee-detail-icon {
   width: 14px;
   height: 14px;
-  color: var(--heaton-blue);
+  color: var(--phh-purple);
   flex-shrink: 0;
 }
 
 .employee-email {
-  color: var(--heaton-blue);
+  color: var(--phh-purple);
   font-size: 13px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -193,7 +193,7 @@
 }
 
 .empty-state-title {
-  font-family: var(--font-heading), 'Roboto Condensed', sans-serif;
+  font-family: var(--font-heading), 'Open Sans', sans-serif;
   font-size: 18px;
   font-weight: 600;
   color: var(--text-primary);
@@ -234,7 +234,7 @@
     font-size: 18px;
   }
 
-  .heaton-header-top {
+  .phh-header-top {
     flex-direction: column;
     gap: 12px;
     align-items: flex-start;
@@ -252,7 +252,7 @@
    ========================================================================== */
 
 .employee-card:focus-visible {
-  outline: 2px solid var(--heaton-blue);
+  outline: 2px solid var(--phh-purple);
   outline-offset: 2px;
 }
 

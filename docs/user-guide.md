@@ -1,7 +1,7 @@
-# Heaton Eye Staff Directory - Admin Portal User Guide
+# Paradigm Home Health Staff Directory - Admin Portal User Guide
 
 **Version 1.0** | Last Updated: November 2025
-**Portal URL:** https://staff.heatoneye.com/admin
+**Portal URL:** https://directory.paradigmhh.com/admin
 
 ---
 
@@ -20,7 +20,7 @@
 
 ## System Overview
 
-The Heaton Eye Admin Portal manages the public employee directory at https://staff.heatoneye.com. Changes flow through a three-stage approval workflow to ensure accuracy.
+The Paradigm Home Health Admin Portal manages the public employee directory at https://directory.paradigmhh.com. Changes flow through a three-stage approval workflow to ensure accuracy.
 
 ### Approval Workflow Diagram
 
@@ -56,7 +56,7 @@ EDITOR          APPROVER         SUPER ADMIN
 **Review & Approve Only**
 
 #### Login Credentials
-- **Email:** m.balderas@heatoneye.com
+- **Email:** m.balderas@paradigmhh.com
 - **Password:** Balderas2025!
 
 #### What You Can Do
@@ -100,7 +100,7 @@ EDITOR          APPROVER         SUPER ADMIN
 
 #### Login Credentials
 - **Email:** editor@internal
-- **Password:** HeatonEditor2025
+- **Password:** ParadigmEditor2025
 
 #### What You Can Do
 - ✅ View all employees in the directory
@@ -123,7 +123,7 @@ EDITOR          APPROVER         SUPER ADMIN
    - Last Name
    - Email
    - Extension
-   - Location (Tyler, Athens, Longview, Gun Barrel City)
+   - Location (Tyler, Longview, Keller, Plano, Abilene, San Angelo, Temple, Whitney, Cedar Park)
    - Title (optional)
 4. Click "Submit for Approval"
 5. Change appears in "Pending Changes" tab with "Awaiting Approval" badge
@@ -213,7 +213,7 @@ EDITOR          APPROVER         SUPER ADMIN
 - Count of approved changes waiting
 - Breakdown by type (Add, Edit, Delete)
 - Direct link to admin portal
-- Professional Heaton Eye branding
+- Professional Paradigm Home Health branding
 
 ### Sample Email Content
 
@@ -267,7 +267,7 @@ Change Summary:
 
 **Solution:**
 - ✓ Verify changes have been published (not just approved)
-- ✓ Check staff.heatoneye.com to confirm
+- ✓ Check directory.paradigmhh.com to confirm
 - ✓ Try hard refresh: Ctrl+F5 (Windows) or Cmd+Shift+R (Mac)
 - ✓ Allow 30 seconds for CDN cache to clear
 
@@ -314,9 +314,9 @@ Change Summary:
 
 For technical support or questions about the admin portal:
 
-📧 **Email:** tickets@heatoneye.com
+📧 **Email:** support@paradigmhh.com
 
-For Heaton Eye-specific questions, contact your internal IT department or authorized admin.
+For Paradigm Home Health-specific questions, contact your internal IT department or authorized admin.
 
 ---
 

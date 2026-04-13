@@ -17,7 +17,7 @@ export async function GET() {
     })
 
     // Map to expected format
-    const mappedVersions = versions.map(v => ({
+    const mappedVersions = versions.map((v: { versionId: string; timestamp: Date; author: string; changeCount: number; description: string | null }) => ({
       id: v.versionId,
       timestamp: v.timestamp.toISOString(),
       author: v.author,

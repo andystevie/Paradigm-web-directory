@@ -3,19 +3,23 @@
 @tailwind utilities;
 
 /* ==========================================================================
-   Heaton Eye Associates — Brand Design Tokens
-   Extracted from heatoneye.com
+   Paradigm Home Health — Brand Design Tokens
    ========================================================================== */
 
 :root {
-  /* Brand Blues — from heatoneye.com */
-  --heaton-navy: #0f2b4c;
-  --heaton-navy-deep: #0a1f38;
-  --heaton-blue: #3a80de;
-  --heaton-blue-mid: #2d6fc4;
-  --heaton-blue-light: #4a90e8;
-  --heaton-blue-pale: rgba(58, 128, 222, 0.08);
-  --heaton-blue-glow: rgba(58, 128, 222, 0.15);
+  /* Brand Purples — Paradigm Home Health */
+  --phh-purple: #5B2C8B;
+  --phh-purple-deep: #3A1B5C;
+  --phh-purple-light: #7B4CA8;
+  --phh-purple-pale: rgba(91, 44, 139, 0.08);
+  --phh-purple-glow: rgba(91, 44, 139, 0.15);
+
+  /* Brand Gold */
+  --phh-gold: #D4A843;
+  --phh-gold-light: #E0BE6A;
+
+  /* Brand Lavender */
+  --phh-lavender: #F5F0FA;
 
   /* Neutrals */
   --gray-50: #f8fafc;
@@ -81,7 +85,7 @@ html {
 }
 
 body {
-  font-family: var(--font-body), 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-body), 'Open Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 15px;
   line-height: 1.6;
   font-weight: 400;

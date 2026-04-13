@@ -121,7 +121,7 @@ export default function AdminPage() {
 
 ```bash
 # Make sure dev server is running
-cd "/home/jryan/Heaton Web Directory Prod"
+cd "/home/jryan/Paradigm Web Directory Prod"
 npm run dev
 
 # Visit: http://localhost:3000/admin
@@ -129,7 +129,7 @@ npm run dev
 
 **You should:**
 1. Be redirected to login page
-2. Login with `jryan5150@gmail.com` / `HeatonAdmin2025!`
+2. Login with `jryan5150@gmail.com` / `ParadigmAdmin2025!`
 3. See admin dashboard
 4. Be able to click through all tabs
 
@@ -139,7 +139,7 @@ npm run dev
 
 ### 1. Commit & Push to GitHub
 ```bash
-cd "/home/jryan/Heaton Web Directory Prod"
+cd "/home/jryan/Paradigm Web Directory Prod"
 git add .
 git commit -m "Add password-based authentication system"
 git push origin main
@@ -147,7 +147,7 @@ git push origin main
 
 ### 2. Create Vercel Project (if not done)
 - Go to vercel.com
-- Import GitHub repo "heaton-web-directory-prod"
+- Import GitHub repo "paradigm-web-directory-prod"
 - Click Deploy
 
 ### 3. Add Environment Variables in Vercel
@@ -165,7 +165,7 @@ SESSION_SECRET=kj3h4k5jh34k5jh3k4j5h3k4j5h3k4j5h3k4j5h3k45=
 
 ### 4. Configure Custom Domain
 - Settings → Domains
-- Add: `staff.heatoneye.com`
+- Add: `directory.paradigmhh.com`
 - Copy DNS records
 - Add to GoDaddy:
   - Type: CNAME
@@ -174,9 +174,9 @@ SESSION_SECRET=kj3h4k5jh34k5jh3k4j5h3k4j5h3k4j5h3k4j5h3k45=
 - Wait 5-10 minutes
 
 ### 5. Test Production
-- Visit: `https://staff.heatoneye.com`
+- Visit: `https://directory.paradigmhh.com`
 - Should show public employee directory
-- Visit: `https://staff.heatoneye.com/admin`
+- Visit: `https://directory.paradigmhh.com/admin`
 - Should redirect to login
 - Login and test!
 
@@ -185,23 +185,23 @@ SESSION_SECRET=kj3h4k5jh34k5jh3k4j5h3k4j5h3k4j5h3k4j5h3k45=
 ## 📧 Share These Links:
 
 **Public Directory:**
-`https://staff.heatoneye.com`
+`https://directory.paradigmhh.com`
 
 **Admin Login (for you):**
-`https://staff.heatoneye.com/admin`
+`https://directory.paradigmhh.com/admin`
 - Email: jryan5150@gmail.com
-- Password: HeatonAdmin2025!
+- Password: ParadigmAdmin2025!
 
 **Admin Login (for M. Balderas):**
-`https://staff.heatoneye.com/admin`
-- Email: m.balderas@heatoneye.com
+`https://directory.paradigmhh.com/admin`
+- Email: m.balderas@paradigmhh.com
 - Password: Balderas2025!
 - Role: Can approve/reject (can't publish)
 
 **Admin Login (for other staff):**
-`https://staff.heatoneye.com/admin`
+`https://directory.paradigmhh.com/admin`
 - Email: editor@internal
-- Password: HeatonEditor2025
+- Password: ParadigmEditor2025
 - Role: Can submit changes only
 
 ---
@@ -212,7 +212,7 @@ Check dev server output:
 ```bash
 # Kill existing server
 # Then restart:
-cd "/home/jryan/Heaton Web Directory Prod"
+cd "/home/jryan/Paradigm Web Directory Prod"
 npm run dev
 ```
 
@@ -226,7 +226,7 @@ Check browser console for errors (F12 → Console tab)
 - ✅ 3-tier role system (superadmin, approver, editor)
 - ✅ Public directory at `/`
 - ✅ Protected admin at `/admin`
-- ✅ Live on staff.heatoneye.com
+- ✅ Live on directory.paradigmhh.com
 
 **For email notifications (Steps 7-12)**, start a new Claude Code session with the IMPLEMENTATION-GUIDE.md file!
 

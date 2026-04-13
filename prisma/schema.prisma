@@ -1,4 +1,4 @@
-// Prisma Schema for Heaton Eye Staff Directory
+// Prisma Schema for Paradigm Home Health Employee Directory
 // Database: Vercel Postgres (Neon)
 
 generator client {
@@ -27,10 +27,12 @@ model Employee {
   department    String?
   photoUrl      String?
   avatarUrl     String?
+  region        String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   @@index([location])
+  @@index([region])
   @@index([lastName, firstName])
 }
 

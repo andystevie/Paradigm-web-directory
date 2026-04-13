@@ -2,15 +2,15 @@
 
 ---
 
-**Subject:** New Heaton Eye Staff Directory Admin Portal - Now Live
+**Subject:** New Paradigm Home Health Staff Directory Admin Portal - Now Live
 
 ---
 
 Dear [Client Contact Name],
 
-I'm pleased to announce that the new Heaton Eye Staff Directory admin portal is now live at:
+I'm pleased to announce that the new Paradigm Home Health Staff Directory admin portal is now live at:
 
-🔗 https://staff.heatoneye.com/admin
+🔗 https://directory.paradigmhh.com/admin
 
 This secure, password-protected system replaces the previous OAuth-based authentication and provides enhanced control over your employee directory with a streamlined approval workflow.
 
@@ -40,15 +40,15 @@ This secure, password-protected system replaces the previous OAuth-based authent
 
 **Super Admin (Full Access):**
 - Email: jryan5150@gmail.com
-- Password: HeatonAdmin2025!
+- Password: ParadigmAdmin2025!
 
 **Approver (Review & Approve):**
-- Email: m.balderas@heatoneye.com
+- Email: m.balderas@paradigmhh.com
 - Password: Balderas2025!
 
 **Editor (Submit Changes):**
 - Email: editor@internal
-- Password: HeatonEditor2025
+- Password: ParadigmEditor2025
 
 ⚠️ **IMPORTANT:** Please change these passwords after your first login and store them securely.
 
@@ -61,7 +61,7 @@ This secure, password-protected system replaces the previous OAuth-based authent
 3. **SUPER ADMIN** publishes approved changes to live directory
 4. **EMAIL NOTIFICATION** sent daily if approved changes are waiting
 
-This workflow ensures accuracy and maintains quality control over your public-facing employee directory at https://staff.heatoneye.com.
+This workflow ensures accuracy and maintains quality control over your public-facing employee directory at https://directory.paradigmhh.com.
 
 ---
 

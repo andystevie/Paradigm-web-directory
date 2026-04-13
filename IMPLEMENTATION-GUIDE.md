@@ -26,7 +26,7 @@
 Run these commands to generate password hashes:
 
 ```bash
-cd "/home/jryan/Heaton Web Directory Prod"
+cd "/home/jryan/Paradigm Web Directory Prod"
 
 # Generate hash for your superadmin password
 npx tsx scripts/generate-password-hash.ts "YourSuperAdminPassword123"
@@ -59,7 +59,7 @@ Replace the contents of `data/users.json`:
   },
   {
     "id": "user-approver",
-    "email": "m.balderas@heatoneye.com",
+    "email": "m.balderas@paradigmhh.com",
     "name": "M. Balderas",
     "role": "approver",
     "passwordHash": "PASTE_BALDERAS_HASH_HERE",
@@ -179,7 +179,7 @@ export default function AdminLoginPage() {
               color: 'var(--primary-text-color)',
               marginBottom: '8px'
             }}>
-              Heaton Eye Admin
+              Paradigm Home Health Admin
             </h1>
             <p style={{
               fontSize: '14px',
@@ -232,7 +232,7 @@ export default function AdminLoginPage() {
                   fontSize: '14px',
                   outline: 'none'
                 }}
-                placeholder="your.email@heatoneye.com"
+                placeholder="your.email@paradigmhh.com"
               />
             </div>
 
@@ -426,9 +426,9 @@ onClick={async () => {
 
 Delete these files:
 ```bash
-rm -rf "/home/jryan/Heaton Web Directory Prod/src/auth.ts"
-rm -rf "/home/jryan/Heaton Web Directory Prod/src/app/api/auth"
-rm -rf "/home/jryan/Heaton Web Directory Prod/src/types/next-auth.d.ts"
+rm -rf "/home/jryan/Paradigm Web Directory Prod/src/auth.ts"
+rm -rf "/home/jryan/Paradigm Web Directory Prod/src/app/api/auth"
+rm -rf "/home/jryan/Paradigm Web Directory Prod/src/types/next-auth.d.ts"
 ```
 
 ---
@@ -607,7 +607,7 @@ export async function GET() {
 
     // Build email
     const emailBody = `
-      <h2>Heaton Eye Admin Portal - Changes Ready for Review</h2>
+      <h2>Paradigm Home Health Admin Portal - Changes Ready for Review</h2>
 
       <p>Hi Jace,</p>
 
@@ -620,7 +620,7 @@ export async function GET() {
       </ul>
 
       <p>
-        <a href="https://staff.heatoneye.com/admin" style="background: #3182CE; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
+        <a href="https://directory.paradigmhh.com/admin" style="background: #3182CE; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
           Login to Publish
         </a>
       </p>
@@ -628,14 +628,14 @@ export async function GET() {
       <hr style="margin: 32px 0; border: none; border-top: 1px solid #e5e7eb;" />
 
       <p style="color: #6b7280; font-size: 14px;">
-        Heaton Eye Admin Portal<br />
+        Paradigm Home Health Admin Portal<br />
         This is an automated notification sent daily at 9:00 AM
       </p>
     `
 
     // Send email
     const { data, error } = await resend.emails.send({
-      from: 'Heaton Eye Admin <noreply@staff.heatoneye.com>',
+      from: 'Paradigm Home Health Admin <noreply@directory.paradigmhh.com>',
       to: process.env.NOTIFICATION_EMAIL || 'jryan5150@gmail.com',
       subject: `Admin Portal: ${approvedChanges.length} Changes Ready for Review`,
       html: emailBody
@@ -710,8 +710,8 @@ For production (Vercel dashboard), add the same variables.
 1. Connect GitHub repo to Vercel
 2. Add environment variables (SESSION_SECRET, RESEND_API_KEY, NOTIFICATION_EMAIL)
 3. Deploy
-4. Go to Settings → Domains → Add `staff.heatoneye.com`
-5. Configure DNS in GoDaddy (CNAME: staff → cname.vercel-dns.com)
+4. Go to Settings → Domains → Add `directory.paradigmhh.com`
+5. Configure DNS (CNAME: directory → cname.vercel-dns.com)
 6. Wait for SSL certificate (5-10 minutes)
 7. Test live site!
 
@@ -725,7 +725,7 @@ For production (Vercel dashboard), add the same variables.
 - **Can**: Approve, Publish, Rollback, Manage Users
 
 ### Approver (M. Balderas):
-- **Email**: m.balderas@heatoneye.com
+- **Email**: m.balderas@paradigmhh.com
 - **Password**: [The one you generated in Step 1]
 - **Can**: Approve/Reject changes (but cannot publish)
 
@@ -755,7 +755,7 @@ For production (Vercel dashboard), add the same variables.
 
 ```bash
 # Generate password hashes
-cd "/home/jryan/Heaton Web Directory Prod"
+cd "/home/jryan/Paradigm Web Directory Prod"
 npx tsx scripts/generate-password-hash.ts "YourPassword123"
 
 # Test dev server
@@ -794,7 +794,7 @@ vercel --prod
 - [ ] All login roles work
 - [ ] Main directory at `/` is public (no login)
 - [ ] Admin at `/admin` requires login
-- [ ] DNS resolves to staff.heatoneye.com
+- [ ] DNS resolves to directory.paradigmhh.com
 - [ ] SSL certificate is active
 - [ ] Daily cron job runs (check Vercel logs next day)
 

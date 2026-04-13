@@ -5,7 +5,7 @@
 Run these commands in your terminal (WSL or Git Bash):
 
 ```bash
-cd "/home/jryan/Heaton Web Directory Prod"
+cd "/home/jryan/Paradigm Web Directory Prod"
 
 # Check what changed
 git status
@@ -40,7 +40,7 @@ git push -u origin main
 ### Option B: If creating new Vercel project
 1. Go to [vercel.com](https://vercel.com) and log in
 2. Click "Add New..." → "Project"
-3. Import your GitHub repository: `heaton-web-directory-prod`
+3. Import your GitHub repository: `paradigm-web-directory-prod`
 4. Vercel will auto-detect Next.js settings
 5. Click "Deploy"
 
@@ -79,15 +79,15 @@ kj3h4k5jh34k5jh3k4j5h3k4j5h3k4j5h3k4j5h3k45=
 ## ✅ Step 4: Test Production Deployment
 
 1. Go to your Vercel project dashboard
-2. Find your deployment URL (e.g., `heaton-web-directory-prod.vercel.app`)
+2. Find your deployment URL (e.g., `paradigm-web-directory-prod.vercel.app`)
 3. Test these URLs:
    - **Public directory:** `https://your-project.vercel.app/`
    - **Admin login:** `https://your-project.vercel.app/admin` (should redirect to login)
 
 ### Test Login Credentials:
-- **Super Admin:** `jryan5150@gmail.com` / `HeatonAdmin2025!`
-- **Approver:** `m.balderas@heatoneye.com` / `Balderas2025!`
-- **Editor:** `editor@internal` / `HeatonEditor2025`
+- **Super Admin:** `jryan5150@gmail.com` / `ParadigmAdmin2025!`
+- **Approver:** `m.balderas@paradigmhh.com` / `Balderas2025!`
+- **Editor:** `editor@internal` / `ParadigmEditor2025`
 
 ---
 
@@ -125,7 +125,7 @@ kj3h4k5jh34k5jh3k4j5h3k4j5h3k4j5h3k4j5h3k45=
 
 When ready to add custom domain:
 1. Vercel → Project Settings → Domains
-2. Add: `staff.heatoneye.com`
+2. Add: `directory.paradigmhh.com`
 3. Configure DNS records as shown
 4. Wait for SSL certificate (usually 5-10 minutes)
 

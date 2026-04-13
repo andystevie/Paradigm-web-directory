@@ -93,25 +93,27 @@ function validateRow(data: any, rowIndex: number, columnMapping: Record<string, 
   return errors
 }
 
-// Location normalization mapping for Nextiva CSV data
+// Location normalization mapping for CSV data
 const LOCATION_MAPPINGS: Record<string, string> = {
-  // Exact matches
-  'longview': 'Longview',
-  'athens': 'Athens',
+  // ETX
   'tyler': 'Tyler',
-  'gun barrel city': 'Gun Barrel City',
-
-  // Tyler variations from Nextiva
-  'tyler boa': 'Tyler',
-  'tyler bldg 1': 'Tyler',
-  'tyler bldg 2': 'Tyler',
-  'tyler building 1': 'Tyler',
-  'tyler building 2': 'Tyler',
-
-  // Other variations
-  'gunbarrel': 'Gun Barrel City',
-  'gun barrel': 'Gun Barrel City',
-  'gunbarrelcity': 'Gun Barrel City'
+  'longview': 'Longview',
+  // DFW
+  'ft. worth': 'Ft. Worth/Keller',
+  'ft worth': 'Ft. Worth/Keller',
+  'fort worth': 'Ft. Worth/Keller',
+  'keller': 'Ft. Worth/Keller',
+  'ft. worth/keller': 'Ft. Worth/Keller',
+  'plano': 'Plano',
+  // WTX
+  'abilene': 'Abilene',
+  'san angelo': 'San Angelo',
+  'sanangelo': 'San Angelo',
+  // CTX
+  'temple': 'Temple',
+  'whitney': 'Whitney',
+  'cedar park': 'Cedar Park',
+  'cedarpark': 'Cedar Park'
 }
 
 function normalizeLocation(location: string): string {
@@ -267,48 +269,48 @@ export function convertToEmployees(nextiveUsers: NextivaUser[]): Employee[] {
 export function generateSampleCSV(): string {
   const sampleData = [
     {
-      'First Name': 'John',
+      'First Name': 'Jane',
       'Last Name': 'Smith',
-      'Email': 'john.smith@heaton.com',
-      'Extension': '1001',
+      'Email': 'jane.smith@paradigmhh.com',
+      'Extension': '2001',
       'DID': '+1-555-0101',
-      'Team': 'Engineering',
-      'Location': 'Longview',
-      'Department': 'Technology',
-      'Job Title': 'Senior Developer'
-    },
-    {
-      'First Name': 'Sarah',
-      'Last Name': 'Johnson',
-      'Email': 'sarah.johnson@heaton.com',
-      'Extension': '1002',
-      'DID': '+1-555-0102',
-      'Team': 'Marketing',
+      'Team': 'Nursing',
       'Location': 'Tyler',
-      'Department': 'Marketing',
-      'Job Title': 'Marketing Manager'
+      'Department': 'Nursing',
+      'Job Title': 'RN Case Manager'
     },
     {
-      'First Name': 'Mike',
-      'Last Name': 'Davis',
-      'Email': 'mike.davis@heaton.com',
-      'Extension': '1003',
+      'First Name': 'John',
+      'Last Name': 'Johnson',
+      'Email': 'john.johnson@paradigmhh.com',
+      'Extension': '3001',
+      'DID': '+1-555-0102',
+      'Team': 'Physical Therapy',
+      'Location': 'Ft. Worth/Keller',
+      'Department': 'Physical Therapy',
+      'Job Title': 'Physical Therapist'
+    },
+    {
+      'First Name': 'Maria',
+      'Last Name': 'Garcia',
+      'Email': 'maria.garcia@paradigmhh.com',
+      'Extension': '4001',
       'DID': '+1-555-0103',
-      'Team': 'Sales',
-      'Location': 'Athens',
-      'Department': 'Sales',
-      'Job Title': 'Sales Representative'
+      'Team': 'Administration',
+      'Location': 'Abilene',
+      'Department': 'Administration',
+      'Job Title': 'Intake Coordinator'
     },
     {
-      'First Name': 'Lisa',
-      'Last Name': 'Williams',
-      'Email': 'lisa.williams@heaton.com',
-      'Extension': '1004',
+      'First Name': 'David',
+      'Last Name': 'Lee',
+      'Email': 'david.lee@paradigmhh.com',
+      'Extension': '5001',
       'DID': '+1-555-0104',
-      'Team': 'Customer Service',
-      'Location': 'Gun Barrel City',
-      'Department': 'Support',
-      'Job Title': 'Customer Service Rep'
+      'Team': 'Speech Therapy',
+      'Location': 'Temple',
+      'Department': 'Speech Therapy',
+      'Job Title': 'Speech-Language Pathologist'
     }
   ]
 

@@ -14,4 +14,5 @@ export interface Employee {
   department?: string
   photoUrl?: string
   avatarUrl?: string
+  region?: string
 }

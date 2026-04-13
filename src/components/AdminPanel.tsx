@@ -42,7 +42,7 @@ export default function AdminPanel({ employees, onDataUpdate, onShowCSVImport, i
     const url = window.URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `heaton-directory-${new Date().toISOString().split('T')[0]}.csv`
+    a.download = `paradigm-directory-${new Date().toISOString().split('T')[0]}.csv`
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
@@ -53,7 +53,7 @@ export default function AdminPanel({ employees, onDataUpdate, onShowCSVImport, i
     return (
       <button
         onClick={() => setShowPanel(true)}
-        className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-heaton rounded-full shadow-modern-lg flex items-center justify-center hover:shadow-xl transition-all duration-300 hover:scale-110 z-40"
+        className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-phh rounded-full shadow-modern-lg flex items-center justify-center hover:shadow-xl transition-all duration-300 hover:scale-110 z-40"
         title="Admin Panel"
       >
         <CogIcon className="w-6 h-6 text-white" />
@@ -64,23 +64,23 @@ export default function AdminPanel({ employees, onDataUpdate, onShowCSVImport, i
   return (
     <div className="fixed bottom-6 right-6 bg-white/90 backdrop-blur-md rounded-2xl shadow-modern-lg border border-white/50 p-4 space-y-3 z-40 min-w-64">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="font-bold text-heaton-gray font-heading">Admin Panel</h3>
+        <h3 className="font-bold text-phh-gray font-heading">Admin Panel</h3>
         <button
           onClick={() => setShowPanel(false)}
           className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
         >
-          <CogIcon className="w-5 h-5 text-heaton-gray-light" />
+          <CogIcon className="w-5 h-5 text-phh-gray-light" />
         </button>
       </div>
 
       <div className="space-y-2">
-        <div className="text-sm text-heaton-gray-light mb-2">
+        <div className="text-sm text-phh-gray-light mb-2">
           <strong>{employees.length}</strong> employees • {isImported ? 'Imported' : 'Sample'} data
         </div>
 
         <button
           onClick={onShowCSVImport}
-          className="w-full btn-modern bg-heaton-blue text-white hover:bg-heaton-blue-dark flex items-center space-x-2 text-sm py-2"
+          className="w-full btn-modern bg-phh-purple text-white hover:bg-phh-purple-deep flex items-center space-x-2 text-sm py-2"
         >
           <PlusIcon className="w-4 h-4" />
           <span>Import CSV</span>
@@ -105,7 +105,7 @@ export default function AdminPanel({ employees, onDataUpdate, onShowCSVImport, i
         )}
       </div>
 
-      <div className="pt-2 border-t border-gray-200 text-xs text-heaton-gray-light">
+      <div className="pt-2 border-t border-gray-200 text-xs text-phh-gray-light">
         Admin tools for data management
       </div>
     </div>

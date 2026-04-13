@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { Employee } from '@/types/employee'
+import { REGIONS, ALL_LOCATIONS, getRegionForLocation } from '@/lib/locations'
 import LocationTabs from './LocationTabs'
 import ExportMenu from './ExportMenu'
 
@@ -10,30 +11,46 @@ interface AppleDirectoryViewProps {
 }
 
 export default function AppleDirectoryView({ employees }: AppleDirectoryViewProps) {
+  const [selectedRegion, setSelectedRegion] = useState('All')
   const [selectedLocation, setSelectedLocation] = useState('All')
   const [searchTerm, setSearchTerm] = useState('')
 
-  const { locations, employeeCounts } = useMemo(() => {
+  const { locations, employeeCounts, regionCounts } = useMemo(() => {
     const locationSet = new Set<string>()
     const counts: Record<string, number> = {}
+    const regCounts: Record<string, number> = Object.fromEntries(Object.keys(REGIONS).map(r => [r, 0]))
 
     employees.forEach(emp => {
       if (emp.location) {
         locationSet.add(emp.location)
         counts[emp.location] = (counts[emp.location] || 0) + 1
+        const region = getRegionForLocation(emp.location)
+        if (region && regCounts[region] !== undefined) {
+          regCounts[region]++
+        }
       }
     })
 
     return {
       locations: Array.from(locationSet).sort(),
-      employeeCounts: counts
+      employeeCounts: counts,
+      regionCounts: regCounts
     }
   }, [employees])
 
   const { groupedEmployees, filteredEmployees } = useMemo(() => {
-    const locationFiltered = selectedLocation === 'All'
-      ? employees
-      : employees.filter(emp => emp.location === selectedLocation)
+    let locationFiltered = employees
+
+    if (selectedRegion !== 'All') {
+      const regionLocations = REGIONS[selectedRegion as keyof typeof REGIONS] || []
+      if (selectedLocation !== 'All') {
+        locationFiltered = employees.filter(emp => emp.location === selectedLocation)
+      } else {
+        locationFiltered = employees.filter(emp => (regionLocations as readonly string[]).includes(emp.location))
+      }
+    } else if (selectedLocation !== 'All') {
+      locationFiltered = employees.filter(emp => emp.location === selectedLocation)
+    }
 
     const searchFiltered = searchTerm
       ? locationFiltered.filter(emp => {
@@ -62,7 +79,7 @@ export default function AppleDirectoryView({ employees }: AppleDirectoryViewProp
       groupedEmployees: grouped,
       filteredEmployees: searchFiltered
     }
-  }, [employees, selectedLocation, searchTerm])
+  }, [employees, selectedRegion, selectedLocation, searchTerm])
 
   const totalFilteredCount = filteredEmployees.length
 
@@ -72,23 +89,35 @@ export default function AppleDirectoryView({ employees }: AppleDirectoryViewProp
     return `${firstInitial}${lastInitial}`.toUpperCase()
   }
 
+  const handleRegionChange = (region: string) => {
+    setSelectedRegion(region)
+    setSelectedLocation('All')
+  }
+
+  const sortedLocations = useMemo(() => {
+    if (selectedRegion !== 'All') {
+      const regionLocs = REGIONS[selectedRegion as keyof typeof REGIONS] || []
+      return regionLocs.filter(loc => locations.includes(loc) || true)
+    }
+    return locations
+  }, [selectedRegion, locations])
+
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-page)' }}>
       {/* ── Branded Header ── */}
-      <header className="heaton-header">
-        <div className="heaton-header-inner">
+      <header className="phh-header">
+        <div className="phh-header-inner">
           {/* Top row: Brand + Export */}
-          <div className="heaton-header-top">
-            <div className="heaton-brand">
-              <div className="heaton-brand-icon">
+          <div className="phh-header-top">
+            <div className="phh-brand">
+              <div className="phh-brand-icon">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955a1.126 1.126 0 011.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
                 </svg>
               </div>
-              <div className="heaton-brand-text">
-                <h1>Heaton Eye Associates</h1>
-                <p>Staff Directory</p>
+              <div className="phh-brand-text">
+                <h1>Paradigm Home Health</h1>
+                <p>The Proactive Plan for Care&trade;</p>
               </div>
             </div>
 
@@ -99,10 +128,10 @@ export default function AppleDirectoryView({ employees }: AppleDirectoryViewProp
           </div>
 
           {/* Search */}
-          <div className="heaton-search-row">
-            <div className="heaton-search-wrapper">
+          <div className="phh-search-row">
+            <div className="phh-search-wrapper">
               <svg
-                className="heaton-search-icon"
+                className="phh-search-icon"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -114,7 +143,7 @@ export default function AppleDirectoryView({ employees }: AppleDirectoryViewProp
               <input
                 id="employee-search"
                 type="text"
-                className="heaton-search-input"
+                className="phh-search-input"
                 placeholder="Search employees..."
                 autoComplete="off"
                 value={searchTerm}
@@ -123,7 +152,7 @@ export default function AppleDirectoryView({ employees }: AppleDirectoryViewProp
 
               {searchTerm && (
                 <button
-                  className="heaton-search-clear"
+                  className="phh-search-clear"
                   onClick={() => setSearchTerm('')}
                   aria-label="Clear search"
                 >
@@ -134,17 +163,20 @@ export default function AppleDirectoryView({ employees }: AppleDirectoryViewProp
               )}
             </div>
 
-            <p className="heaton-result-count">
+            <p className="phh-result-count">
               {totalFilteredCount} of {employees.length} employees
             </p>
           </div>
 
           {/* Location Tabs */}
           <LocationTabs
-            locations={locations}
+            locations={sortedLocations}
+            selectedRegion={selectedRegion}
             selectedLocation={selectedLocation}
+            onRegionChange={handleRegionChange}
             onLocationChange={setSelectedLocation}
             employeeCounts={employeeCounts}
+            regionCounts={regionCounts}
             totalCount={employees.length}
           />
         </div>
@@ -164,7 +196,7 @@ export default function AppleDirectoryView({ employees }: AppleDirectoryViewProp
           </div>
         ) : (
           <div>
-            {locations
+            {ALL_LOCATIONS
               .filter(location => groupedEmployees[location])
               .map((location, locationIndex) => (
                 <div
@@ -172,8 +204,8 @@ export default function AppleDirectoryView({ employees }: AppleDirectoryViewProp
                   className="location-section"
                   style={{ animationDelay: `${locationIndex * 0.08}s` }}
                 >
-                  {/* Location header (only in "All" view) */}
-                  {selectedLocation === 'All' && (
+                  {/* Location header (only in multi-location views) */}
+                  {(selectedLocation === 'All') && (
                     <div className="location-section-header">
                       <h2 className="location-section-title">{location}</h2>
                       <span className="location-section-count">

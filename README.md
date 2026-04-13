@@ -1,20 +1,30 @@
-# Heaton Employee Directory
+# Paradigm Home Health Employee Directory
 
-A clean, fast employee directory web application for Heaton Eye Associates. Features a mobile-friendly interface with search and location filtering capabilities.
+A clean, fast employee directory web application for Paradigm Home Health. Features a mobile-friendly interface with search, region-based filtering, and location tabs across 9 offices in 4 Texas regions.
 
 ## Features
 
-- **Employee Directory**: Browse all 269 employees with contact information
+- **Employee Directory**: Browse employees with contact information
 - **Live Search**: Search by name, title, team, or location with instant results
-- **Location Filter**: Filter employees by Tyler, Longview, Athens, or Gun Barrel City
-- **Admin Panel**: Upload and manage employee data via CSV import
+- **Region & Location Filtering**: Filter by region (ETX, DFW, WTX, CTX) then drill into individual locations
+- **Admin Portal**: Role-based admin panel with approval workflows
+- **CSV Import/Export**: Upload and manage employee data via CSV
 - **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
-- **No Authentication Required**: Direct access for all employees
+
+## Locations
+
+| Region | Offices |
+|--------|---------|
+| ETX | Tyler, Longview |
+| DFW | Keller, Plano |
+| WTX | Abilene, San Angelo |
+| CTX | Temple, Whitney, Cedar Park |
 
 ## Tech Stack
 
 - **Next.js 15** - React framework with App Router
 - **TypeScript** - Type-safe development
+- **Prisma** - Database ORM (PostgreSQL)
 - **Tailwind CSS** - Utility-first styling
 - **PapaParse** - CSV import/export
 - **Heroicons** - Icon library
@@ -35,49 +45,41 @@ npm run dev
 
 ## Deployment
 
-This application is optimized for deployment on Vercel:
-
-1. Push code to GitHub
-2. Import repository to Vercel
-3. Deploy (no environment variables needed)
+This application is optimized for deployment on Vercel with Vercel Postgres.
 
 ## Project Structure
 
 ```
 src/
 ├── app/
-│   ├── admin/           # Admin panel for CSV management
-│   ├── api/employees/   # Employee API routes
-│   ├── heaton-directory/ # Alternative directory route
+│   ├── admin/           # Admin portal (login, dashboard)
+│   ├── api/             # API routes (employees, admin)
 │   └── page.tsx         # Main directory page
 ├── components/
-│   ├── AdminPanel.tsx
-│   ├── AppleDirectoryView.tsx
-│   └── CSVImport.tsx
+│   ├── AppleDirectoryView.tsx  # Main directory UI
+│   ├── LocationTabs.tsx        # Region/location filtering
+│   ├── ExportMenu.tsx          # CSV/Excel export
+│   ├── CSVImport.tsx           # CSV upload
+│   └── admin/                  # Admin components
 ├── lib/
-│   ├── database.ts      # JSON file storage
-│   ├── searchFilter.ts  # Live search functionality
-│   └── csvImport.ts     # CSV parsing utilities
+│   ├── database.ts      # Prisma database operations
+│   ├── locations.ts     # Region & location config
+│   ├── csvImport.ts     # CSV parsing utilities
+│   └── auth-helpers.ts  # Authentication helpers
 └── styles/
-    ├── apple-design-system.css
-    └── directory-layout.css
+    ├── phh-design-system.css   # Brand design system
+    ├── apple-design-system.css # UI component styles
+    └── directory-layout.css    # Card grid layout
 ```
 
-## Admin Panel
+## Admin Portal
 
-Access the admin panel at `/admin` to:
+Access the admin portal at `/admin` to:
+- Manage employees (add, edit, delete with approval workflow)
 - Upload new employee data via CSV
-- Export current data to CSV
-- View employee statistics by location
-
-### CSV Format
-
-The CSV should include these columns:
-- Name, Email, Extension, DID, Team, Location, Department, Job Title
-
-## Data Storage
-
-Employee data is stored in `data/employees.json` for simplicity and fast read access. No database setup required.
+- Export current data to CSV/Excel
+- Manage admin users and roles
+- Version history with rollback
 
 ## License
 

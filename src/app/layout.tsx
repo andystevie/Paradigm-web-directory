@@ -1,17 +1,17 @@
 import type { Metadata } from 'next'
-import { Roboto_Condensed, Source_Sans_3 } from 'next/font/google'
+import { Open_Sans } from 'next/font/google'
 import './globals.css'
-import '@/styles/heaton-design-system.css'
+import '@/styles/phh-design-system.css'
 import '@/styles/directory-layout.css'
 
-const robotoCondensed = Roboto_Condensed({
+const openSans = Open_Sans({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700'],
   display: 'swap',
   variable: '--font-heading',
 })
 
-const sourceSans = Source_Sans_3({
+const openSansBody = Open_Sans({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600'],
   display: 'swap',
@@ -19,8 +19,8 @@ const sourceSans = Source_Sans_3({
 })
 
 export const metadata: Metadata = {
-  title: 'Staff Directory | Heaton Eye Associates',
-  description: 'Internal staff directory for Heaton Eye Associates',
+  title: 'Employee Directory | Paradigm Home Health',
+  description: 'Internal employee directory for Paradigm Home Health',
 }
 
 export default function RootLayout({
@@ -29,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${robotoCondensed.variable} ${sourceSans.variable}`}>
+    <html lang="en" className={`${openSans.variable} ${openSansBody.variable}`}>
       <body>
         {children}
       </body>

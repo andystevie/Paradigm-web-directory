@@ -1,38 +1,11 @@
 [
   {
     "id": "user-superadmin",
-    "email": "jryan5150@gmail.com",
-    "name": "Jace Ryan",
+    "email": "admin@paradigmhh.com",
+    "name": "Admin",
     "role": "superadmin",
     "passwordHash": "$2b$10$xFd/8xZIIv7PW2I5SLy6tOXqbGSVrs3fqMCXb5kTbUtGDtIR5N4ca",
-    "addedAt": "2025-10-31T00:00:00.000Z",
+    "addedAt": "2026-04-13T00:00:00.000Z",
     "addedBy": "system"
-  },
-  {
-    "id": "user-jenna-burgess",
-    "email": "jburgess@heatoneye.com",
-    "name": "Jenna Burgess",
-    "role": "superadmin",
-    "passwordHash": "$2b$10$LUpIBb3GQW1TSmn.a4Ebx.9Aggv.L4Dc1PBrXU.1EAyo51//PCPmG",
-    "addedAt": "2025-11-14T00:00:00.000Z",
-    "addedBy": "jryan5150@gmail.com"
-  },
-  {
-    "id": "user-approver",
-    "email": "m.balderas@heatoneye.com",
-    "name": "M. Balderas",
-    "role": "approver",
-    "passwordHash": "$2b$10$p0ri4NskJt4B9fJcHkMvgOYfzyDAfA2C03QaXhvHuOdG439OsJIhu",
-    "addedAt": "2025-10-31T00:00:00.000Z",
-    "addedBy": "jryan5150@gmail.com"
-  },
-  {
-    "id": "user-editor",
-    "email": "editor@internal",
-    "name": "Staff Editor",
-    "role": "editor",
-    "passwordHash": "$2b$10$J2hkc7B0l0ZCAuuYFH912OMyO.FZwswj5kC1pOPDizDWUPjL7RNyO",
-    "addedAt": "2025-10-31T00:00:00.000Z",
-    "addedBy": "jryan5150@gmail.com"
   }
 ]

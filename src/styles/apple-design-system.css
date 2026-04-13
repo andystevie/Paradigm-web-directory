@@ -13,17 +13,20 @@
   --primary-text-color: #1A202C;
   --secondary-text-color: #718096;
 
-  /* Heaton Eye Brand Colors */
-  --heaton-blue: #3182CE;
-  --heaton-blue-dark: #2B6CB0;
-  --heaton-blue-darkest: #13345F;
-  --heaton-gray: #2D3748;
-  --heaton-gray-light: #4A5568;
+  /* Paradigm Home Health Brand Colors */
+  --phh-purple: #5B2C8B;
+  --phh-purple-deep: #3A1B5C;
+  --phh-purple-light: #7B4CA8;
+  --phh-gold: #D4A843;
+  --phh-gold-light: #E0BE6A;
+  --phh-lavender: #F5F0FA;
+  --phh-gray: #2D3748;
+  --phh-gray-light: #4A5568;
 
   /* Accent Colors */
-  --accent-color: #3182CE;
-  --accent-color-hover: #2B6CB0;
-  --accent-color-light: rgba(49, 130, 206, 0.1);
+  --accent-color: #5B2C8B;
+  --accent-color-hover: #3A1B5C;
+  --accent-color-light: rgba(91, 44, 139, 0.1);
 
   /* Border & Divider Colors */
   --border-color: #e5e5e5;
@@ -79,7 +82,7 @@
    ========================================================================== */
 
 body {
-  font-family: 'Roboto Condensed', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
   font-size: var(--font-size-base);
   line-height: var(--line-height-normal);
   font-weight: var(--font-weight-regular);

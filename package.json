@@ -1,12 +1,16 @@
 {
-  "name": "heaton-web-directory",
+  "name": "paradigm-web-directory",
   "version": "1.0.0",
-  "description": "Heaton Eye Associates Employee Directory",
+  "description": "Paradigm Home Health Employee Directory",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
+    "postinstall": "prisma generate",
     "start": "next start",
     "lint": "next lint"
+  },
+  "prisma": {
+    "seed": "npx tsx prisma/seed.ts"
   },
   "keywords": [],
   "author": "",
@@ -35,6 +39,7 @@
     "eslint-config-next": "^15.5.4",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.13",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.2"
   }
 }

@@ -45,7 +45,7 @@ export default function AdminLoginPage() {
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      background: 'linear-gradient(135deg, #0a1f38 0%, #0f2b4c 50%, #163d6b 100%)',
+      background: 'linear-gradient(135deg, #3A1B5C 0%, #5B2C8B 50%, #7B4CA8 100%)',
       padding: '24px'
     }}>
       <div style={{ width: '100%', maxWidth: '400px' }}>
@@ -64,12 +64,11 @@ export default function AdminLoginPage() {
             backdropFilter: 'blur(8px)'
           }}>
             <svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="rgba(255,255,255,0.85)" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955a1.126 1.126 0 011.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
             </svg>
           </div>
           <h1 style={{
-            fontFamily: 'var(--font-heading), Roboto Condensed, sans-serif',
+            fontFamily: 'var(--font-heading), Open Sans, sans-serif',
             fontSize: '20px',
             fontWeight: '700',
             color: 'white',
@@ -77,7 +76,7 @@ export default function AdminLoginPage() {
             textTransform: 'uppercase',
             marginBottom: '4px'
           }}>
-            Heaton Eye Associates
+            Paradigm Home Health
           </h1>
           <p style={{
             fontSize: '13px',
@@ -148,14 +147,14 @@ export default function AdminLoginPage() {
                   color: 'var(--gray-800)'
                 }}
                 onFocus={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--heaton-blue)'
-                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(58,128,222,0.1)'
+                  e.currentTarget.style.borderColor = 'var(--phh-purple)'
+                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(91,44,139,0.1)'
                 }}
                 onBlur={(e) => {
                   e.currentTarget.style.borderColor = 'var(--gray-200)'
                   e.currentTarget.style.boxShadow = 'none'
                 }}
-                placeholder="your.email@heatoneye.com"
+                placeholder="your.email@paradigmhh.com"
               />
             </div>
 
@@ -186,8 +185,8 @@ export default function AdminLoginPage() {
                   color: 'var(--gray-800)'
                 }}
                 onFocus={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--heaton-blue)'
-                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(58,128,222,0.1)'
+                  e.currentTarget.style.borderColor = 'var(--phh-purple)'
+                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(91,44,139,0.1)'
                 }}
                 onBlur={(e) => {
                   e.currentTarget.style.borderColor = 'var(--gray-200)'
@@ -203,7 +202,7 @@ export default function AdminLoginPage() {
               style={{
                 width: '100%',
                 padding: '12px',
-                background: loading ? 'var(--gray-300)' : 'linear-gradient(135deg, var(--heaton-navy) 0%, #163d6b 100%)',
+                background: loading ? 'var(--gray-300)' : 'linear-gradient(135deg, var(--phh-purple-deep) 0%, var(--phh-purple) 100%)',
                 color: 'white',
                 border: 'none',
                 borderRadius: '9999px',

@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get current employees for backup
-    const currentEmployees = await prisma.employee.findMany()
+    const currentEmployees: Employee[] = (await prisma.employee.findMany()) as unknown as Employee[]
     const currentSnapshot = currentEmployees.map(emp => ({
       id: emp.id,
       firstName: emp.firstName,
