@@ -7,4 +7,7 @@ config({ path: ".env" });
 export default defineConfig({
   schema: "prisma/schema.prisma",
   engine: "classic",
+  datasource: {
+    url: process.env.POSTGRES_PRISMA_URL || "postgresql://placeholder:placeholder@localhost:5432/placeholder",
+  },
 });
