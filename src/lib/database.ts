@@ -38,7 +38,8 @@ export async function getAllEmployees(): Promise<Employee[]> {
     }))
   } catch (error) {
     console.error('Error reading employees:', error)
-    return []
+    console.error('POSTGRES_PRISMA_URL set:', !!process.env.POSTGRES_PRISMA_URL)
+    throw error
   }
 }
 
