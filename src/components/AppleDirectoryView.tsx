@@ -70,9 +70,9 @@ export default function AppleDirectoryView({ employees }: AppleDirectoryViewProp
 
     Object.keys(grouped).forEach(location => {
       grouped[location].sort((a, b) => {
-        const emailA = (a.email || '\uffff').toLowerCase()
-        const emailB = (b.email || '\uffff').toLowerCase()
-        return emailA.localeCompare(emailB)
+        const nameA = `${a.lastName} ${a.firstName}`.toLowerCase()
+        const nameB = `${b.lastName} ${b.firstName}`.toLowerCase()
+        return nameA.localeCompare(nameB)
       })
     })
 
