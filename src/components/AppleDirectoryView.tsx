@@ -422,8 +422,8 @@ export default function AppleDirectoryView({ employees }: AppleDirectoryViewProp
                 {selectedEmployee.location && (
                   <DetailRow label="Location">{selectedEmployee.location}</DetailRow>
                 )}
-                {selectedEmployee.region && (
-                  <DetailRow label="Region">{selectedEmployee.region}</DetailRow>
+                {getRegionForLocation(selectedEmployee.location) && (
+                  <DetailRow label="Region">{getRegionForLocation(selectedEmployee.location)}</DetailRow>
                 )}
                 {selectedEmployee.department && (
                   <DetailRow label="Department">{selectedEmployee.department}</DetailRow>
