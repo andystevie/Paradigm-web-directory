@@ -67,20 +67,20 @@ async function fetchAllUsers(token: string): Promise<GraphUser[]> {
     'accountEnabled',
   ].join(',')
 
-  let url: string | null = `https://graph.microsoft.com/v1.0/users?$select=${fields}&$top=999`
   const all: GraphUser[] = []
+  let nextUrl: string | null = `https://graph.microsoft.com/v1.0/users?$select=${fields}&$top=999`
 
-  while (url) {
-    const res = await fetch(url, {
+  while (nextUrl !== null) {
+    const res: Response = await fetch(nextUrl, {
       headers: { Authorization: `Bearer ${token}` },
     })
     if (!res.ok) {
       const text = await res.text()
       throw new Error(`Graph API error: ${res.status} ${text}`)
     }
-    const json = await res.json()
+    const json: { value?: GraphUser[]; '@odata.nextLink'?: string } = await res.json()
     all.push(...(json.value || []))
-    url = json['@odata.nextLink'] || null
+    nextUrl = json['@odata.nextLink'] || null
   }
 
   return all
