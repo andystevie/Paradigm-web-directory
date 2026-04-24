@@ -17,6 +17,7 @@ interface GraphUser {
   businessPhones?: string[]
   mobilePhone?: string
   accountEnabled?: boolean
+  proxyAddresses?: string[]
 }
 
 async function getAccessToken(): Promise<string> {
@@ -65,6 +66,7 @@ async function fetchAllUsers(token: string): Promise<GraphUser[]> {
     'businessPhones',
     'mobilePhone',
     'accountEnabled',
+    'proxyAddresses',
   ].join(',')
 
   const all: GraphUser[] = []
@@ -122,7 +124,8 @@ export async function fetchEntraEmployees(): Promise<Omit<Employee, 'id'>[]> {
     if (!firstName && !lastName) continue
 
     const { phoneNumber, extension } = parsePhone(u.businessPhones?.[0])
-    const email = u.mail || u.userPrincipalName
+    const primarySmtp = u.proxyAddresses?.find((a) => a.startsWith('SMTP:'))?.slice(5)
+    const email = primarySmtp || u.userPrincipalName || u.mail
 
     employees.push({
       firstName: firstName || '',
