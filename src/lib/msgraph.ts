@@ -102,6 +102,20 @@ function unmangleGuestUpn(upn?: string): string | undefined {
 }
 
 /**
+ * Normalize a phone string to "(xxx) xxx-xxxx". Strips a leading country
+ * code "1". If the result isn't exactly 10 digits, returns the original.
+ */
+function formatPhone(raw?: string): string | undefined {
+  if (!raw) return undefined
+  const trimmed = raw.trim()
+  if (!trimmed) return undefined
+  const digits = trimmed.replace(/\D/g, '')
+  const ten = digits.length === 11 && digits.startsWith('1') ? digits.slice(1) : digits
+  if (ten.length !== 10) return trimmed
+  return `(${ten.slice(0, 3)}) ${ten.slice(3, 6)}-${ten.slice(6)}`
+}
+
+/**
  * Parse a phone number like "(903) 581-1223 x100" into main + extension
  */
 function parsePhone(raw?: string): { phoneNumber?: string; extension?: string } {
@@ -110,12 +124,12 @@ function parsePhone(raw?: string): { phoneNumber?: string; extension?: string } 
   const match = raw.match(/^(.*?)\s*(?:x|ext\.?|extension)\s*(\d+)\s*$/i)
   if (match) {
     return {
-      phoneNumber: match[1].trim() || undefined,
+      phoneNumber: formatPhone(match[1]),
       extension: match[2].trim(),
     }
   }
 
-  return { phoneNumber: raw.trim() || undefined }
+  return { phoneNumber: formatPhone(raw) }
 }
 
 /**
@@ -146,7 +160,7 @@ export async function fetchEntraEmployees(): Promise<Omit<Employee, 'id'>[]> {
       lastName: lastName || '',
       email: email || undefined,
       extension: extension || undefined,
-      phoneNumber: phoneNumber || u.mobilePhone || undefined,
+      phoneNumber: phoneNumber || formatPhone(u.mobilePhone),
       location: u.officeLocation || 'Remote',
       team: u.department || '',
       title: u.jobTitle || undefined,
