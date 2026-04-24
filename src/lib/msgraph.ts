@@ -89,6 +89,26 @@ async function fetchAllUsers(token: string): Promise<GraphUser[]> {
 }
 
 /**
+ * Guest-account UPNs from Entra look like `original_external.tld@paradigmhh.com`.
+ * We detect that pattern so we can fall back to a constructed company email.
+ */
+function isMangledGuestUpn(email?: string): boolean {
+  if (!email) return false
+  const localPart = email.split('@')[0] || ''
+  return /_[\w-]+\.[a-z]{2,}$/i.test(localPart)
+}
+
+/**
+ * Construct a company email from name using the standard pattern: {lastname}{firstInitial}@paradigmhh.com
+ */
+function constructCompanyEmail(firstName?: string, lastName?: string): string | undefined {
+  const first = firstName?.trim().toLowerCase()
+  const last = lastName?.trim().toLowerCase()
+  if (!first || !last) return undefined
+  return `${last}${first[0]}@paradigmhh.com`
+}
+
+/**
  * Parse a phone number like "(903) 581-1223 x100" into main + extension
  */
 function parsePhone(raw?: string): { phoneNumber?: string; extension?: string } {
@@ -125,7 +145,10 @@ export async function fetchEntraEmployees(): Promise<Omit<Employee, 'id'>[]> {
 
     const { phoneNumber, extension } = parsePhone(u.businessPhones?.[0])
     const primarySmtp = u.proxyAddresses?.find((a) => a.startsWith('SMTP:'))?.slice(5)
-    const email = primarySmtp || u.userPrincipalName || u.mail
+    let email = primarySmtp || u.userPrincipalName || u.mail
+    if (isMangledGuestUpn(email)) {
+      email = constructCompanyEmail(firstName, lastName) || email
+    }
 
     employees.push({
       firstName: firstName || '',
