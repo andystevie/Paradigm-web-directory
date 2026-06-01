@@ -51,14 +51,14 @@ export const sampleEmployees: Employee[] = [
     department: 'Speech Therapy',
     region: 'ETX'
   },
-  // DFW - Keller
+  // DFW - Fort Worth
   {
     id: 'phh-5',
     firstName: 'Angela',
     lastName: 'Brooks',
     email: 'angela.brooks@paradigmhh.com',
     extension: '3001',
-    location: 'Keller',
+    location: 'Fort Worth',
     team: 'Administration',
     title: 'Clinical Manager',
     department: 'Administration',
@@ -70,7 +70,7 @@ export const sampleEmployees: Employee[] = [
     lastName: 'Kim',
     email: 'david.kim@paradigmhh.com',
     extension: '3002',
-    location: 'Keller',
+    location: 'Fort Worth',
     team: 'Occupational Therapy',
     title: 'Occupational Therapist',
     department: 'Occupational Therapy',

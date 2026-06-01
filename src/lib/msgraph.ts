@@ -3,6 +3,7 @@
  */
 
 import { Employee } from '@/types/employee'
+import { normalizeLocation } from '@/lib/locations'
 
 interface GraphUser {
   id: string
@@ -167,7 +168,7 @@ export async function fetchEntraEmployees(): Promise<Omit<Employee, 'id'>[]> {
       extension: extension || undefined,
       phoneNumber: phoneNumber || undefined,
       mobilePhone: mobilePhone || undefined,
-      location: u.officeLocation || 'Remote',
+      location: normalizeLocation(u.officeLocation),
       team: u.department || '',
       title: u.jobTitle || undefined,
       department: u.department || undefined,

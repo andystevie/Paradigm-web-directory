@@ -99,11 +99,11 @@ const LOCATION_MAPPINGS: Record<string, string> = {
   'tyler': 'Tyler',
   'longview': 'Longview',
   // DFW
-  'ft. worth': 'Ft. Worth/Keller',
-  'ft worth': 'Ft. Worth/Keller',
-  'fort worth': 'Ft. Worth/Keller',
-  'keller': 'Ft. Worth/Keller',
-  'ft. worth/keller': 'Ft. Worth/Keller',
+  'ft. worth': 'Fort Worth',
+  'ft worth': 'Fort Worth',
+  'fort worth': 'Fort Worth',
+  'keller': 'Fort Worth',
+  'ft. worth/keller': 'Fort Worth',
   'plano': 'Plano',
   // WTX
   'abilene': 'Abilene',
