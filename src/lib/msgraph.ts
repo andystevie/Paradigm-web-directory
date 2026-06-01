@@ -150,7 +150,12 @@ export async function fetchEntraEmployees(): Promise<Omit<Employee, 'id'>[]> {
     // Skip accounts without a real name (service accounts, shared mailboxes, etc.)
     if (!firstName && !lastName) continue
 
-    const { phoneNumber, extension } = parsePhone(u.businessPhones?.[0])
+    const { phoneNumber: officeBase, extension } = parsePhone(u.businessPhones?.[0])
+    // Office phone only counts if it has an extension. A bare main-line
+    // number (no ext) isn't a useful directory contact.
+    const phoneNumber = extension ? officeBase : undefined
+    const mobilePhone = formatPhone(u.mobilePhone)
+
     const primarySmtp = u.proxyAddresses?.find((a) => a.startsWith('SMTP:'))?.slice(5)
     const unmangled = unmangleGuestUpn(u.userPrincipalName)
     const email = unmangled || primarySmtp || u.userPrincipalName || u.mail
@@ -160,7 +165,8 @@ export async function fetchEntraEmployees(): Promise<Omit<Employee, 'id'>[]> {
       lastName: lastName || '',
       email: email || undefined,
       extension: extension || undefined,
-      phoneNumber: phoneNumber || formatPhone(u.mobilePhone),
+      phoneNumber: phoneNumber || undefined,
+      mobilePhone: mobilePhone || undefined,
       location: u.officeLocation || 'Remote',
       team: u.department || '',
       title: u.jobTitle || undefined,

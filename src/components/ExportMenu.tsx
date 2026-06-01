@@ -26,7 +26,7 @@ export default function ExportMenu({ employees, selectedLocation }: ExportMenuPr
   }, [isOpen])
 
   const exportToCSV = () => {
-    const headers = ['First Name', 'Last Name', 'Email', 'Extension', 'DID', 'Phone', 'Team', 'Location', 'Department', 'Title']
+    const headers = ['First Name', 'Last Name', 'Email', 'Extension', 'DID', 'Phone', 'Mobile', 'Team', 'Location', 'Department', 'Title']
     const csvContent = [
       headers.join(','),
       ...employees.map(emp => [
@@ -36,6 +36,7 @@ export default function ExportMenu({ employees, selectedLocation }: ExportMenuPr
         emp.extension || '',
         emp.did || '',
         emp.phoneNumber || '',
+        emp.mobilePhone || '',
         emp.team || '',
         emp.location || '',
         emp.department || '',
@@ -57,7 +58,7 @@ export default function ExportMenu({ employees, selectedLocation }: ExportMenuPr
   }
 
   const exportToExcel = () => {
-    const headers = ['First Name', 'Last Name', 'Email', 'Extension', 'DID', 'Phone', 'Team', 'Location', 'Department', 'Title']
+    const headers = ['First Name', 'Last Name', 'Email', 'Extension', 'DID', 'Phone', 'Mobile', 'Team', 'Location', 'Department', 'Title']
     const csvContent = [
       headers.join('\t'),
       ...employees.map(emp => [
@@ -67,6 +68,7 @@ export default function ExportMenu({ employees, selectedLocation }: ExportMenuPr
         emp.extension || '',
         emp.did || '',
         emp.phoneNumber || '',
+        emp.mobilePhone || '',
         emp.team || '',
         emp.location || '',
         emp.department || '',

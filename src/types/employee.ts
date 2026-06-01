@@ -6,6 +6,7 @@ export interface Employee {
   extension?: string
   extensionNumber?: string
   phoneNumber?: string
+  mobilePhone?: string
   did?: string
   location: string
   team: string

@@ -19,6 +19,7 @@ model Employee {
   email         String?
   extension     String?
   phoneNumber   String?
+  mobilePhone   String?
   did           String?
   location      String
   team          String

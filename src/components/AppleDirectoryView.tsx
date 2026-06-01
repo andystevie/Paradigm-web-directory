@@ -250,38 +250,55 @@ export default function AppleDirectoryView({ employees }: AppleDirectoryViewProp
                           )}
 
                           {/* Contact */}
-                          {(employee.email || employee.extension || employee.phoneNumber) && (
-                            <div className="employee-details">
-                              {employee.email && (
-                                <div className="employee-detail-item">
-                                  <svg className="employee-detail-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-                                  </svg>
-                                  <a href={`mailto:${employee.email}`} className="employee-email" onClick={(e) => e.stopPropagation()}>
-                                    {employee.email}
-                                  </a>
-                                </div>
-                              )}
-                              {employee.extension && (
-                                <div className="employee-detail-item employee-detail-item--extension">
-                                  <svg className="employee-detail-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
-                                  </svg>
-                                  <span>Ext. {employee.extension}</span>
-                                </div>
-                              )}
-                              {employee.phoneNumber && (
-                                <div className="employee-detail-item employee-detail-item--extension">
-                                  <svg className="employee-detail-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
-                                  </svg>
-                                  <a href={`tel:${employee.phoneNumber}`} onClick={(e) => e.stopPropagation()}>
-                                    {employee.phoneNumber}
-                                  </a>
-                                </div>
-                              )}
-                            </div>
-                          )}
+                          {(() => {
+                            const phoneDisplay = formatPhoneDisplay(employee.phoneNumber, employee.extension)
+                            const mobileDisplay = formatPhoneDisplay(employee.mobilePhone)
+                            const showExtOnly = !phoneDisplay && employee.extension
+                            const hasAny = employee.email || phoneDisplay || mobileDisplay || showExtOnly
+                            if (!hasAny) return null
+                            return (
+                              <div className="employee-details">
+                                {employee.email && (
+                                  <div className="employee-detail-item">
+                                    <svg className="employee-detail-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                                    </svg>
+                                    <a href={`mailto:${employee.email}`} className="employee-email" onClick={(e) => e.stopPropagation()}>
+                                      {employee.email}
+                                    </a>
+                                  </div>
+                                )}
+                                {phoneDisplay && (
+                                  <div className="employee-detail-item employee-detail-item--extension">
+                                    <svg className="employee-detail-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+                                    </svg>
+                                    <a href={`tel:${telHref(employee.phoneNumber, employee.extension)}`} onClick={(e) => e.stopPropagation()}>
+                                      {phoneDisplay}
+                                    </a>
+                                  </div>
+                                )}
+                                {mobileDisplay && (
+                                  <div className="employee-detail-item employee-detail-item--extension">
+                                    <svg className="employee-detail-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
+                                    </svg>
+                                    <a href={`tel:${telHref(employee.mobilePhone)}`} onClick={(e) => e.stopPropagation()}>
+                                      {mobileDisplay}
+                                    </a>
+                                  </div>
+                                )}
+                                {showExtOnly && (
+                                  <div className="employee-detail-item employee-detail-item--extension">
+                                    <svg className="employee-detail-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+                                    </svg>
+                                    <span>Ext. {employee.extension}</span>
+                                  </div>
+                                )}
+                              </div>
+                            )
+                          })()}
                         </div>
                       </div>
                     ))}
@@ -402,16 +419,33 @@ export default function AppleDirectoryView({ employees }: AppleDirectoryViewProp
                     </a>
                   </DetailRow>
                 )}
-                {selectedEmployee.extension && (
-                  <DetailRow label="Extension">Ext. {selectedEmployee.extension}</DetailRow>
-                )}
-                {selectedEmployee.phoneNumber && (
-                  <DetailRow label="Phone">
-                    <a href={`tel:${selectedEmployee.phoneNumber}`} style={{ color: '#6b46c1', textDecoration: 'none' }}>
-                      {selectedEmployee.phoneNumber}
-                    </a>
-                  </DetailRow>
-                )}
+                {(() => {
+                  const phoneDisplay = formatPhoneDisplay(selectedEmployee.phoneNumber, selectedEmployee.extension)
+                  if (phoneDisplay) {
+                    return (
+                      <DetailRow label="Office">
+                        <a href={`tel:${telHref(selectedEmployee.phoneNumber, selectedEmployee.extension)}`} style={{ color: '#6b46c1', textDecoration: 'none' }}>
+                          {phoneDisplay}
+                        </a>
+                      </DetailRow>
+                    )
+                  }
+                  if (selectedEmployee.extension) {
+                    return <DetailRow label="Extension">Ext. {selectedEmployee.extension}</DetailRow>
+                  }
+                  return null
+                })()}
+                {(() => {
+                  const mobileDisplay = formatPhoneDisplay(selectedEmployee.mobilePhone)
+                  if (!mobileDisplay) return null
+                  return (
+                    <DetailRow label="Mobile">
+                      <a href={`tel:${telHref(selectedEmployee.mobilePhone)}`} style={{ color: '#6b46c1', textDecoration: 'none' }}>
+                        {mobileDisplay}
+                      </a>
+                    </DetailRow>
+                  )
+                })()}
                 {selectedEmployee.did && (
                   <DetailRow label="Direct">
                     <a href={`tel:${selectedEmployee.did}`} style={{ color: '#6b46c1', textDecoration: 'none' }}>
@@ -438,6 +472,41 @@ export default function AppleDirectoryView({ employees }: AppleDirectoryViewProp
       )}
     </div>
   )
+}
+
+function splitPhoneExt(raw?: string): { base?: string; ext?: string } {
+  if (!raw) return {}
+  const trimmed = raw.trim()
+  if (!trimmed) return {}
+  const m = trimmed.match(/^(.*?)\s*(?:x|ext\.?|extension)\s*(\d+)\s*$/i)
+  if (m) return { base: m[1], ext: m[2] }
+  return { base: trimmed }
+}
+
+function formatPhoneBase(raw?: string): string | undefined {
+  if (!raw) return undefined
+  const trimmed = raw.trim()
+  if (!trimmed) return undefined
+  const digits = trimmed.replace(/\D/g, '')
+  const ten = digits.length === 11 && digits.startsWith('1') ? digits.slice(1) : digits
+  if (ten.length !== 10) return trimmed
+  return `(${ten.slice(0, 3)}) ${ten.slice(3, 6)}-${ten.slice(6)}`
+}
+
+function formatPhoneDisplay(phoneNumber?: string, extension?: string): string | undefined {
+  const { base, ext: embeddedExt } = splitPhoneExt(phoneNumber)
+  const formatted = formatPhoneBase(base)
+  if (!formatted) return undefined
+  const ext = extension || embeddedExt
+  return ext ? `${formatted} ext ${ext}` : formatted
+}
+
+function telHref(phoneNumber?: string, extension?: string): string {
+  const { base, ext: embeddedExt } = splitPhoneExt(phoneNumber)
+  const digits = (base || '').replace(/\D/g, '')
+  if (!digits) return ''
+  const ext = extension || embeddedExt
+  return ext ? `${digits},${ext}` : digits
 }
 
 function DetailRow({ label, children }: { label: string; children: React.ReactNode }) {

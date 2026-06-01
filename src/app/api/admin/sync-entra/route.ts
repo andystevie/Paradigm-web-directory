@@ -46,6 +46,7 @@ async function runSync() {
           email: emp.email || null,
           extension: emp.extension || null,
           phoneNumber: emp.phoneNumber || null,
+          mobilePhone: emp.mobilePhone || null,
           location: emp.location,
           team: emp.team,
           title: emp.title || null,
