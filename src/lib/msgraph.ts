@@ -136,6 +136,28 @@ function parsePhone(raw?: string): { phoneNumber?: string; extension?: string } 
 }
 
 /**
+ * Main switchboard numbers for each Paradigm office. When an account's
+ * businessPhones entry is one of these and has no extension, it's just
+ * the office's public number rather than a useful per-employee contact,
+ * so we hide it. Any other extensionless number is treated as a DID.
+ */
+const MAIN_OFFICE_NUMBERS = new Set([
+  '3256556600',
+  '8177177729',
+  '9724220033',
+  '2546941447',
+  '9035811223',
+  '4308108060',
+])
+
+function isMainOfficeNumber(formatted?: string): boolean {
+  if (!formatted) return false
+  const digits = formatted.replace(/\D/g, '')
+  const ten = digits.length === 11 && digits.startsWith('1') ? digits.slice(1) : digits
+  return MAIN_OFFICE_NUMBERS.has(ten)
+}
+
+/**
  * Display-name patterns for admin/test/service accounts we never want in
  * the directory. Each pattern is tested against the account's displayName
  * (case-insensitive).
@@ -184,9 +206,12 @@ export async function fetchEntraEmployees(): Promise<Omit<Employee, 'id'>[]> {
     if (!u.jobTitle?.trim() && !u.officeLocation?.trim()) continue
 
     const { phoneNumber: officeBase, extension } = parsePhone(u.businessPhones?.[0])
-    // Office phone only counts if it has an extension. A bare main-line
-    // number (no ext) isn't a useful directory contact.
-    const phoneNumber = extension ? officeBase : undefined
+    // Show the office phone when it has an extension OR when it's a unique
+    // DID. Hide it only when it's one of the known main switchboard numbers
+    // with no extension, which is just the office's public number.
+    const phoneNumber = officeBase && (extension || !isMainOfficeNumber(officeBase))
+      ? officeBase
+      : undefined
     const mobilePhone = formatPhone(u.mobilePhone)
 
     const primarySmtp = u.proxyAddresses?.find((a) => a.startsWith('SMTP:'))?.slice(5)
