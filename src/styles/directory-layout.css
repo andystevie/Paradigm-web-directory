@@ -61,7 +61,7 @@
 
 .employee-card {
   background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--gray-300);
   border-radius: var(--radius-lg);
   padding: 20px;
   display: flex;
@@ -74,7 +74,7 @@
 
 .employee-card:hover {
   box-shadow: var(--shadow-card-hover);
-  border-color: var(--border-default);
+  border-color: var(--phh-purple-light);
   transform: translateY(-1px);
 }
 

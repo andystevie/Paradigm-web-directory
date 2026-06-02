@@ -58,9 +58,9 @@
 }
 
 .phh-brand-icon img {
-  height: 64px;
+  height: 88px;
   width: auto;
-  max-width: 96px;
+  max-width: 240px;
   object-fit: contain;
   display: block;
 }
