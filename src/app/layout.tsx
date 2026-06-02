@@ -23,6 +23,12 @@ export const metadata: Metadata = {
   description: 'Internal employee directory for Paradigm Home Health',
 }
 
+// Runs before React hydrates: reads the persisted theme and applies it to
+// <html> so the page doesn't flash light-then-dark on first paint.
+const themeInitScript = `
+(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();
+`
+
 export default function RootLayout({
   children,
 }: {
@@ -30,6 +36,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${openSans.variable} ${openSansBody.variable}`}>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body>
         {children}
       </body>

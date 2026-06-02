@@ -5,6 +5,7 @@ import { Employee } from '@/types/employee'
 import { REGIONS, ALL_LOCATIONS, getRegionForLocation } from '@/lib/locations'
 import LocationTabs from './LocationTabs'
 import ExportMenu from './ExportMenu'
+import ThemeToggle from './ThemeToggle'
 
 interface AppleDirectoryViewProps {
   employees: Employee[]
@@ -120,10 +121,13 @@ export default function AppleDirectoryView({ employees }: AppleDirectoryViewProp
               </div>
             </div>
 
-            <ExportMenu
-              employees={filteredEmployees}
-              selectedLocation={selectedLocation}
-            />
+            <div className="phh-header-actions">
+              <ThemeToggle />
+              <ExportMenu
+                employees={filteredEmployees}
+                selectedLocation={selectedLocation}
+              />
+            </div>
           </div>
 
           {/* Search */}
@@ -269,7 +273,7 @@ export default function AppleDirectoryView({ employees }: AppleDirectoryViewProp
                                 {phoneDisplay && (
                                   <div className="employee-detail-item employee-detail-item--extension">
                                     <svg className="employee-detail-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 10h14a1 1 0 011 1v8a1 1 0 01-1 1H5a1 1 0 01-1-1v-8a1 1 0 011-1zM8 10V7a2 2 0 012-2h4a2 2 0 012 2v3M4 14h16" />
                                     </svg>
                                     <a href={`tel:${telHref(employee.phoneNumber, employee.extension)}`} onClick={(e) => e.stopPropagation()}>
                                       {phoneDisplay}
@@ -289,7 +293,7 @@ export default function AppleDirectoryView({ employees }: AppleDirectoryViewProp
                                 {showExtOnly && (
                                   <div className="employee-detail-item employee-detail-item--extension">
                                     <svg className="employee-detail-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 10h14a1 1 0 011 1v8a1 1 0 01-1 1H5a1 1 0 01-1-1v-8a1 1 0 011-1zM8 10V7a2 2 0 012-2h4a2 2 0 012 2v3M4 14h16" />
                                     </svg>
                                     <span>Ext. {employee.extension}</span>
                                   </div>

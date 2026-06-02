@@ -42,6 +42,13 @@
   --bg-card-hover: #ffffff;
   --border-default: var(--gray-200);
   --border-subtle: var(--gray-100);
+  --card-border: var(--gray-300);
+  --card-border-hover: var(--phh-purple-light);
+  --heading-color: var(--phh-purple-deep);
+  --accent-text: var(--phh-purple);
+  --avatar-soft-bg: var(--gray-100);
+  --avatar-soft-border: var(--gray-100);
+  --section-divider: var(--phh-purple-pale);
 
   /* Status */
   --success: #059669;
@@ -62,6 +69,54 @@
   --radius-lg: 12px;
   --radius-xl: 16px;
   --radius-pill: 9999px;
+}
+
+/* ==========================================================================
+   Dark Mode — applied via [data-theme="dark"] on <html> or auto via OS pref
+   ========================================================================== */
+
+/* Manual dark mode — set data-theme="dark" on <html> */
+:root[data-theme="dark"] {
+  --bg-page: #0F0A1A;
+  --bg-card: #1A1228;
+  --bg-card-hover: #221833;
+  --text-primary: #F5F0FA;
+  --text-secondary: #B8A8C8;
+  --text-tertiary: #8C7DA0;
+  --border-default: rgba(255, 255, 255, 0.12);
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --card-border: rgba(255, 255, 255, 0.14);
+  --card-border-hover: var(--phh-purple-light);
+  --heading-color: var(--phh-lavender);
+  --accent-text: #B89BD4;
+  --avatar-soft-bg: rgba(255, 255, 255, 0.05);
+  --avatar-soft-border: rgba(255, 255, 255, 0.1);
+  --section-divider: rgba(255, 255, 255, 0.08);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-card-hover: 0 8px 25px rgba(0, 0, 0, 0.55), 0 4px 10px rgba(0, 0, 0, 0.35);
+}
+
+/* OS-pref dark mode — only applies when the user hasn't pinned light explicitly */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg-page: #0F0A1A;
+    --bg-card: #1A1228;
+    --bg-card-hover: #221833;
+    --text-primary: #F5F0FA;
+    --text-secondary: #B8A8C8;
+    --text-tertiary: #8C7DA0;
+    --border-default: rgba(255, 255, 255, 0.12);
+    --border-subtle: rgba(255, 255, 255, 0.06);
+    --card-border: rgba(255, 255, 255, 0.14);
+    --card-border-hover: var(--phh-purple-light);
+    --heading-color: var(--phh-lavender);
+    --accent-text: #B89BD4;
+    --avatar-soft-bg: rgba(255, 255, 255, 0.05);
+    --avatar-soft-border: rgba(255, 255, 255, 0.1);
+    --section-divider: rgba(255, 255, 255, 0.08);
+    --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-card-hover: 0 8px 25px rgba(0, 0, 0, 0.55), 0 4px 10px rgba(0, 0, 0, 0.35);
+  }
 }
 
 /* ==========================================================================

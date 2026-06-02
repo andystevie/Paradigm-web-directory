@@ -24,14 +24,14 @@
   gap: 12px;
   margin-bottom: 20px;
   padding-bottom: 12px;
-  border-bottom: 2px solid var(--phh-purple-pale);
+  border-bottom: 2px solid var(--section-divider);
 }
 
 .location-section-title {
   font-family: var(--font-heading), 'Open Sans', sans-serif;
   font-size: 22px;
   font-weight: 600;
-  color: var(--phh-purple-deep);
+  color: var(--heading-color);
   letter-spacing: 0.01em;
 }
 
@@ -61,7 +61,7 @@
 
 .employee-card {
   background: var(--bg-card);
-  border: 1px solid var(--gray-300);
+  border: 1px solid var(--card-border);
   border-radius: var(--radius-lg);
   padding: 20px;
   display: flex;
@@ -74,7 +74,7 @@
 
 .employee-card:hover {
   box-shadow: var(--shadow-card-hover);
-  border-color: var(--phh-purple-light);
+  border-color: var(--card-border-hover);
   transform: translateY(-1px);
 }
 
@@ -85,8 +85,8 @@
   border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
-  border: 2px solid var(--gray-100);
-  background: var(--gray-100);
+  border: 2px solid var(--avatar-soft-border);
+  background: var(--avatar-soft-bg);
 }
 
 .employee-avatar-placeholder {
@@ -157,19 +157,19 @@
 .employee-detail-item--extension {
   font-size: 14px;
   font-weight: 600;
-  color: var(--phh-purple-deep);
+  color: var(--heading-color);
   letter-spacing: 0.01em;
 }
 
 .employee-detail-icon {
   width: 14px;
   height: 14px;
-  color: var(--phh-purple);
+  color: var(--accent-text);
   flex-shrink: 0;
 }
 
 .employee-email {
-  color: var(--phh-purple);
+  color: var(--accent-text);
   font-size: 13px;
   overflow: hidden;
   text-overflow: ellipsis;
