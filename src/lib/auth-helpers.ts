@@ -60,9 +60,12 @@ export async function verifySession(token: string): Promise<SessionUser | null> 
 
 // Cookie Management
 // The `__Host-` prefix requires Secure, no Domain, and Path=/, and prevents
-// sibling subdomains from overwriting the cookie. Use the legacy name as a
-// fallback during the rollout so existing sessions don't get logged out.
-export const SESSION_COOKIE_NAME = '__Host-admin-session'
+// sibling subdomains from overwriting the cookie — but browsers refuse to
+// store Secure cookies over plain HTTP, which breaks `next dev`. Use the
+// hardened name + secure: true in production, fall back to the legacy name
+// in development. Reads accept either so existing sessions stay valid.
+const IS_PROD = process.env.NODE_ENV === 'production'
+export const SESSION_COOKIE_NAME = IS_PROD ? '__Host-admin-session' : 'admin-session'
 const LEGACY_SESSION_COOKIE_NAME = 'admin-session'
 
 export async function setSessionCookie(user: SessionUser) {
@@ -71,13 +74,15 @@ export async function setSessionCookie(user: SessionUser) {
 
   cookieStore.set(SESSION_COOKIE_NAME, token, {
     httpOnly: true,
-    secure: true,
+    secure: IS_PROD,
     sameSite: 'lax',
     maxAge: SESSION_DURATION / 1000,
     path: '/'
   })
   // Clear any old-name cookie left over from the previous deploy.
-  cookieStore.delete(LEGACY_SESSION_COOKIE_NAME)
+  if (SESSION_COOKIE_NAME !== LEGACY_SESSION_COOKIE_NAME) {
+    cookieStore.delete(LEGACY_SESSION_COOKIE_NAME)
+  }
 }
 
 export async function getSessionFromCookie(): Promise<SessionUser | null> {
