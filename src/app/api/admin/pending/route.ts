@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/db'
 import { PendingChange } from '@/types/admin'
 import { Employee } from '@/types/employee'
+import { requireAuth, canApprove } from '@/lib/auth-helpers'
 
 // Helper to convert Prisma model to PendingChange type
 function mapToPendingChange(dbChange: {
@@ -32,8 +33,11 @@ function mapToPendingChange(dbChange: {
   }
 }
 
-// GET - Get all pending changes
-export async function GET() {
+// GET - Get all pending changes (any authenticated admin)
+export async function GET(request: NextRequest) {
+  const auth = await requireAuth(request)
+  if (auth instanceof NextResponse) return auth
+
   try {
     const changes = await prisma.pendingChange.findMany({
       orderBy: { proposedAt: 'desc' }
@@ -45,8 +49,11 @@ export async function GET() {
   }
 }
 
-// POST - Create new pending change
+// POST - Create new pending change (any authenticated admin)
 export async function POST(request: NextRequest) {
+  const auth = await requireAuth(request)
+  if (auth instanceof NextResponse) return auth
+
   try {
     const change: PendingChange = await request.json()
 
@@ -73,8 +80,11 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// PATCH - Update pending change status
+// PATCH - Approve / reject a pending change (approver+)
 export async function PATCH(request: NextRequest) {
+  const auth = await requireAuth(request, { role: canApprove })
+  if (auth instanceof NextResponse) return auth
+
   try {
     const { id, status, notes, approvedBy, approvedAt } = await request.json()
 
@@ -95,8 +105,11 @@ export async function PATCH(request: NextRequest) {
   }
 }
 
-// DELETE - Delete pending change
+// DELETE - Delete pending change (approver+)
 export async function DELETE(request: NextRequest) {
+  const auth = await requireAuth(request, { role: canApprove })
+  if (auth instanceof NextResponse) return auth
+
   try {
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')

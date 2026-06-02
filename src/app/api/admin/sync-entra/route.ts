@@ -1,30 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { fetchEntraEmployees } from '@/lib/msgraph'
 import prisma from '@/lib/db'
+import { checkBearer } from '@/lib/auth-helpers'
 
 export const maxDuration = 60
 
 export async function POST(request: NextRequest) {
-  // Require the sync secret for manual triggers
-  const authHeader = request.headers.get('authorization')
-  const expected = `Bearer ${process.env.SYNC_SECRET}`
-  if (!process.env.SYNC_SECRET || authHeader !== expected) {
+  if (!checkBearer(request, [process.env.SYNC_SECRET])) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
-
   return runSync()
 }
 
-// GET is used by Vercel Cron (which passes a bearer token via CRON_SECRET automatically)
+// GET is used by Vercel Cron (CRON_SECRET) or manual trigger (SYNC_SECRET).
 export async function GET(request: NextRequest) {
-  const authHeader = request.headers.get('authorization')
-  const isVercelCron = authHeader === `Bearer ${process.env.CRON_SECRET}`
-  const isManual = authHeader === `Bearer ${process.env.SYNC_SECRET}`
-
-  if (!isVercelCron && !isManual) {
+  if (!checkBearer(request, [process.env.CRON_SECRET, process.env.SYNC_SECRET])) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
-
   return runSync()
 }
 
@@ -62,9 +54,6 @@ async function runSync() {
     })
   } catch (error) {
     console.error('Entra sync failed:', error)
-    return NextResponse.json(
-      { error: 'Sync failed', details: String(error) },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Sync failed' }, { status: 500 })
   }
 }

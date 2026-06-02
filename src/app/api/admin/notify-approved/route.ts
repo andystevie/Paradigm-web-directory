@@ -1,8 +1,14 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/db'
 import { Resend } from 'resend'
+import { checkBearer } from '@/lib/auth-helpers'
 
-export async function GET() {
+// Called by Vercel Cron (CRON_SECRET) or manually with SYNC_SECRET.
+export async function GET(request: NextRequest) {
+  if (!checkBearer(request, [process.env.CRON_SECRET, process.env.SYNC_SECRET])) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   try {
     const resend = new Resend(process.env.RESEND_API_KEY)
     // Read approved changes from database
@@ -124,7 +130,7 @@ export async function GET() {
     console.error('Email notification error:', error)
     return NextResponse.json({
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: 'Notification failed',
       sent: false
     }, { status: 500 })
   }

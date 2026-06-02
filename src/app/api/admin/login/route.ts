@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/db'
-import { verifyPassword, setSessionCookie } from '@/lib/auth-helpers'
+import { verifyPassword, setSessionCookie, hashPassword } from '@/lib/auth-helpers'
 import { UserRole } from '@/types/admin'
 
 export async function POST(request: NextRequest) {
@@ -38,6 +38,23 @@ export async function POST(request: NextRequest) {
         { error: 'Invalid email or password' },
         { status: 401 }
       )
+    }
+
+    // Opportunistic rehash: if the stored hash uses an older bcrypt cost,
+    // upgrade it now that we have the plaintext password. Bcrypt format is
+    // `$2a$<cost>$...`; cost 10 was the old default, cost 12 is current.
+    const costMatch = user.passwordHash.match(/^\$2[aby]\$(\d{2})\$/)
+    const currentCost = costMatch ? parseInt(costMatch[1], 10) : 0
+    if (currentCost > 0 && currentCost < 12) {
+      try {
+        const upgraded = await hashPassword(password)
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { passwordHash: upgraded }
+        })
+      } catch (e) {
+        console.error('Rehash failed (non-fatal):', e)
+      }
     }
 
     // Create session

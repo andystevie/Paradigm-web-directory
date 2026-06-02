@@ -2,12 +2,25 @@ import bcrypt from 'bcryptjs'
 import { SignJWT, jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
+import { timingSafeEqual } from 'crypto'
 import { UserRole } from '@/types/admin'
 
-const SESSION_SECRET = new TextEncoder().encode(
-  process.env.SESSION_SECRET || 'your-secret-key-change-in-production'
-)
+// Fail closed: any code path that needs the secret will throw at request
+// time if SESSION_SECRET (or its NEXTAUTH_SECRET alias) is unset, instead
+// of silently using a guessable fallback key. Lazy so `next build` doesn't
+// fail when env vars aren't injected during the build step.
+let cachedSessionSecret: Uint8Array | null = null
+function getSessionSecret(): Uint8Array {
+  if (cachedSessionSecret) return cachedSessionSecret
+  const raw = process.env.SESSION_SECRET || process.env.NEXTAUTH_SECRET
+  if (!raw || raw.length < 16) {
+    throw new Error('SESSION_SECRET (or NEXTAUTH_SECRET) must be set to a secure value')
+  }
+  cachedSessionSecret = new TextEncoder().encode(raw)
+  return cachedSessionSecret
+}
 const SESSION_DURATION = 7 * 24 * 60 * 60 * 1000 // 7 days
+const BCRYPT_COST = 12
 
 export interface SessionUser {
   id: string
@@ -18,7 +31,7 @@ export interface SessionUser {
 
 // Password hashing
 export async function hashPassword(password: string): Promise<string> {
-  return bcrypt.hash(password, 10)
+  return bcrypt.hash(password, BCRYPT_COST)
 }
 
 export async function verifyPassword(password: string, hash: string): Promise<boolean> {
@@ -31,14 +44,14 @@ export async function createSession(user: SessionUser): Promise<string> {
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime('7d')
-    .sign(SESSION_SECRET)
+    .sign(getSessionSecret())
 
   return token
 }
 
 export async function verifySession(token: string): Promise<SessionUser | null> {
   try {
-    const verified = await jwtVerify(token, SESSION_SECRET)
+    const verified = await jwtVerify(token, getSessionSecret())
     return verified.payload.user as SessionUser
   } catch (error) {
     return null
@@ -46,22 +59,32 @@ export async function verifySession(token: string): Promise<SessionUser | null> 
 }
 
 // Cookie Management
+// The `__Host-` prefix requires Secure, no Domain, and Path=/, and prevents
+// sibling subdomains from overwriting the cookie. Use the legacy name as a
+// fallback during the rollout so existing sessions don't get logged out.
+export const SESSION_COOKIE_NAME = '__Host-admin-session'
+const LEGACY_SESSION_COOKIE_NAME = 'admin-session'
+
 export async function setSessionCookie(user: SessionUser) {
   const token = await createSession(user)
   const cookieStore = await cookies()
 
-  cookieStore.set('admin-session', token, {
+  cookieStore.set(SESSION_COOKIE_NAME, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: true,
     sameSite: 'lax',
     maxAge: SESSION_DURATION / 1000,
     path: '/'
   })
+  // Clear any old-name cookie left over from the previous deploy.
+  cookieStore.delete(LEGACY_SESSION_COOKIE_NAME)
 }
 
 export async function getSessionFromCookie(): Promise<SessionUser | null> {
   const cookieStore = await cookies()
-  const token = cookieStore.get('admin-session')
+  const token =
+    cookieStore.get(SESSION_COOKIE_NAME) ??
+    cookieStore.get(LEGACY_SESSION_COOKIE_NAME)
 
   if (!token) {
     return null
@@ -72,12 +95,15 @@ export async function getSessionFromCookie(): Promise<SessionUser | null> {
 
 export async function clearSessionCookie() {
   const cookieStore = await cookies()
-  cookieStore.delete('admin-session')
+  cookieStore.delete(SESSION_COOKIE_NAME)
+  cookieStore.delete(LEGACY_SESSION_COOKIE_NAME)
 }
 
 // Middleware helper
 export function getSessionFromRequest(request: NextRequest): Promise<SessionUser | null> {
-  const token = request.cookies.get('admin-session')
+  const token =
+    request.cookies.get(SESSION_COOKIE_NAME) ??
+    request.cookies.get(LEGACY_SESSION_COOKIE_NAME)
 
   if (!token) {
     return Promise.resolve(null)
@@ -107,4 +133,96 @@ export function canApprove(user: SessionUser | null): boolean {
 
 export function canPublish(user: SessionUser | null): boolean {
   return hasRole(user, 'superadmin')
+}
+
+// ============================================================================
+// Route guards
+// ============================================================================
+
+const MUTATING_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE'])
+
+/**
+ * CSRF defense: for state-changing requests, require the Origin (or, if
+ * absent, Referer) header to match the request's own Host. This blocks the
+ * classic cross-site form/fetch CSRF since attackers cannot forge those
+ * headers from a browser.
+ */
+function checkSameOrigin(request: NextRequest): boolean {
+  const host = request.headers.get('host')
+  if (!host) return false
+  const origin = request.headers.get('origin')
+  if (origin) {
+    try {
+      const u = new URL(origin)
+      return u.host === host
+    } catch {
+      return false
+    }
+  }
+  // Origin omitted on some legitimate same-origin POSTs; fall back to Referer.
+  const referer = request.headers.get('referer')
+  if (referer) {
+    try {
+      const u = new URL(referer)
+      return u.host === host
+    } catch {
+      return false
+    }
+  }
+  // No Origin and no Referer — refuse, since legitimate browser-initiated
+  // mutating requests always carry at least one.
+  return false
+}
+
+export type AuthGuardResult = { user: SessionUser } | NextResponse
+
+/**
+ * Single entry point for session-protected API routes.
+ * - Checks CSRF (Origin/Referer) for mutating methods
+ * - Requires a valid session cookie
+ * - Optionally enforces a role check (e.g., canApprove, isSuperAdmin)
+ * Returns either { user } on success or a NextResponse to return directly.
+ */
+export async function requireAuth(
+  request: NextRequest,
+  options: {
+    role?: (user: SessionUser | null) => boolean
+    /** Override automatic CSRF check (true = always check, false = never) */
+    csrf?: boolean
+  } = {}
+): Promise<AuthGuardResult> {
+  const isMutating = MUTATING_METHODS.has(request.method)
+  const wantsCsrf = options.csrf ?? isMutating
+  if (wantsCsrf && !checkSameOrigin(request)) {
+    return NextResponse.json({ error: 'Cross-site request rejected' }, { status: 403 })
+  }
+  const user = await getSessionFromCookie()
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+  if (options.role && !options.role(user)) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+  return { user }
+}
+
+/**
+ * Constant-time bearer-token check. Accepts any of the provided secrets.
+ * Returns true on a match, false otherwise. Undefined secrets are skipped
+ * (allows passing process.env.X | process.env.Y without conditional logic).
+ */
+export function checkBearer(request: NextRequest, secrets: Array<string | undefined>): boolean {
+  const authHeader = request.headers.get('authorization')
+  if (!authHeader) return false
+  const provided = Buffer.from(authHeader)
+  let matched = false
+  for (const s of secrets) {
+    if (!s) continue
+    const expected = Buffer.from(`Bearer ${s}`)
+    if (provided.length === expected.length && timingSafeEqual(provided, expected)) {
+      matched = true
+      // Don't early-return: keep timing roughly equal across cases.
+    }
+  }
+  return matched
 }

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSessionFromCookie, isSuperAdmin, hashPassword } from '@/lib/auth-helpers'
 import prisma from '@/lib/db'
 
-// GET - Get all users (superadmin only)
+// GET - Get all users (superadmin only). passwordHash is intentionally omitted.
 export async function GET() {
   try {
     const user = await getSessionFromCookie()
@@ -16,16 +16,22 @@ export async function GET() {
     }
 
     const users = await prisma.user.findMany({
-      orderBy: { addedAt: 'desc' }
-    }) as { id: string; email: string; name: string; role: string; passwordHash: string; addedAt: Date; addedBy: string }[]
+      orderBy: { addedAt: 'desc' },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        addedAt: true,
+        addedBy: true,
+      }
+    })
 
-    // Map to expected format
     const mappedUsers = users.map(u => ({
       id: u.id,
       email: u.email,
       name: u.name,
       role: u.role,
-      passwordHash: u.passwordHash,
       addedAt: u.addedAt.toISOString(),
       addedBy: u.addedBy
     }))
@@ -90,7 +96,6 @@ export async function POST(request: NextRequest) {
         email: newUser.email,
         name: newUser.name,
         role: newUser.role,
-        passwordHash: newUser.passwordHash,
         addedAt: newUser.addedAt.toISOString(),
         addedBy: newUser.addedBy
       }
