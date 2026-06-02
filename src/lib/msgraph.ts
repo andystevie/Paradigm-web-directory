@@ -20,7 +20,6 @@ interface GraphUser {
   accountEnabled?: boolean
   proxyAddresses?: string[]
   userType?: string // "Member" | "Guest"
-  assignedLicenses?: { skuId: string }[]
 }
 
 async function getAccessToken(): Promise<string> {
@@ -71,7 +70,6 @@ async function fetchAllUsers(token: string): Promise<GraphUser[]> {
     'accountEnabled',
     'proxyAddresses',
     'userType',
-    'assignedLicenses',
   ].join(',')
 
   const all: GraphUser[] = []
@@ -138,16 +136,20 @@ function parsePhone(raw?: string): { phoneNumber?: string; extension?: string } 
 }
 
 /**
- * Names that flag admin/service accounts we never want in the directory.
- * Matched against displayName, case-insensitive, anywhere in the string.
+ * Display-name patterns for admin/test/service accounts we never want in
+ * the directory. Each pattern is tested against the account's displayName
+ * (case-insensitive).
  */
-const ADMIN_NAME_PATTERNS: RegExp[] = [
-  /lexcom\s*admin/i,
+const EXCLUDED_NAME_PATTERNS: RegExp[] = [
+  /lexcom\s*admin/i,    // anywhere — catches Lexcom Admin variants
+  /^admin/i,            // displayName starts with "Admin" (e.g., "Admin", "Administrator")
+  /^test/i,             // displayName starts with "Test"
+  /veteran\s*affairs/i, // anywhere
 ]
 
-function isAdminAccount(u: GraphUser): boolean {
-  const haystack = `${u.displayName || ''} ${u.givenName || ''} ${u.surname || ''}`
-  return ADMIN_NAME_PATTERNS.some((re) => re.test(haystack))
+function isExcludedAccount(u: GraphUser): boolean {
+  const dn = (u.displayName || '').trim()
+  return EXCLUDED_NAME_PATTERNS.some((re) => re.test(dn))
 }
 
 /**
@@ -167,18 +169,19 @@ export async function fetchEntraEmployees(): Promise<Omit<Employee, 'id'>[]> {
     // Sign-in blocked / disabled accounts: require explicit true to be safe.
     if (u.accountEnabled !== true) continue
 
-    // Shared mailboxes, resource mailboxes, and most service accounts have
-    // no license assigned. Real employees always do.
-    if (!u.assignedLicenses || u.assignedLicenses.length === 0) continue
-
-    // Filter known admin/service accounts ("Lexcom Admin", etc.)
-    if (isAdminAccount(u)) continue
+    // Filter known admin/test/service display names.
+    if (isExcludedAccount(u)) continue
 
     const firstName = u.givenName?.trim()
     const lastName = u.surname?.trim()
 
     // Skip accounts without a real name (service accounts, shared mailboxes, etc.)
     if (!firstName && !lastName) continue
+
+    // Shared mailboxes typically have neither a job title nor an office
+    // location set in Entra. Real employees (and PRN guests) have at
+    // least one. Skip records missing both.
+    if (!u.jobTitle?.trim() && !u.officeLocation?.trim()) continue
 
     const { phoneNumber: officeBase, extension } = parsePhone(u.businessPhones?.[0])
     // Office phone only counts if it has an extension. A bare main-line
