@@ -63,6 +63,12 @@
   color: rgba(255, 255, 255, 0.9);
 }
 
+.phh-brand-icon img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
 .phh-brand-text h1 {
   font-family: var(--font-heading), 'Open Sans', sans-serif;
   font-size: clamp(18px, 2.5vw, 22px);
