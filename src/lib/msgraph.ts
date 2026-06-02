@@ -20,6 +20,7 @@ interface GraphUser {
   accountEnabled?: boolean
   proxyAddresses?: string[]
   userType?: string // "Member" | "Guest"
+  assignedLicenses?: { skuId: string }[]
 }
 
 async function getAccessToken(): Promise<string> {
@@ -70,6 +71,7 @@ async function fetchAllUsers(token: string): Promise<GraphUser[]> {
     'accountEnabled',
     'proxyAddresses',
     'userType',
+    'assignedLicenses',
   ].join(',')
 
   const all: GraphUser[] = []
@@ -164,6 +166,10 @@ export async function fetchEntraEmployees(): Promise<Omit<Employee, 'id'>[]> {
   for (const u of users) {
     // Sign-in blocked / disabled accounts: require explicit true to be safe.
     if (u.accountEnabled !== true) continue
+
+    // Shared mailboxes, resource mailboxes, and most service accounts have
+    // no license assigned. Real employees always do.
+    if (!u.assignedLicenses || u.assignedLicenses.length === 0) continue
 
     // Filter known admin/service accounts ("Lexcom Admin", etc.)
     if (isAdminAccount(u)) continue
