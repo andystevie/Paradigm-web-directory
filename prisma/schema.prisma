@@ -68,6 +68,19 @@ model PendingChange {
   @@index([proposedAt])
 }
 
+// Audit/activity log
+model ActivityLog {
+  id        String   @id @default(cuid())
+  type      String   // publish, rollback, sync, login, user-add, user-delete
+  action    String   // short verb phrase ("Published 5 changes")
+  details   String?  // free-form context
+  author    String   // email of the user who triggered the event
+  timestamp DateTime @default(now())
+
+  @@index([timestamp])
+  @@index([type])
+}
+
 // Version history for rollback
 model Version {
   id          String   @id @default(cuid())

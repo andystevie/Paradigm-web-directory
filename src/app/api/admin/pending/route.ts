@@ -3,6 +3,7 @@ import prisma from '@/lib/db'
 import { PendingChange } from '@/types/admin'
 import { Employee } from '@/types/employee'
 import { requireAuth, canApprove } from '@/lib/auth-helpers'
+import { PendingChangeCreateSchema, PendingChangePatchSchema, parseBody } from '@/lib/schemas'
 
 // Helper to convert Prisma model to PendingChange type
 function mapToPendingChange(dbChange: {
@@ -55,7 +56,9 @@ export async function POST(request: NextRequest) {
   if (auth instanceof NextResponse) return auth
 
   try {
-    const change: PendingChange = await request.json()
+    const parsed = parseBody(PendingChangeCreateSchema, await request.json())
+    if (parsed instanceof NextResponse) return parsed
+    const change = parsed
 
     const newChange = await prisma.pendingChange.create({
       data: {
@@ -86,7 +89,9 @@ export async function PATCH(request: NextRequest) {
   if (auth instanceof NextResponse) return auth
 
   try {
-    const { id, status, notes, approvedBy, approvedAt } = await request.json()
+    const parsed = parseBody(PendingChangePatchSchema, await request.json())
+    if (parsed instanceof NextResponse) return parsed
+    const { id, status, notes, approvedBy, approvedAt } = parsed
 
     const updatedChange = await prisma.pendingChange.update({
       where: { id },

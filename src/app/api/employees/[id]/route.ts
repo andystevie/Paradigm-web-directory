@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getEmployeeById, updateEmployee, deleteEmployee } from '@/lib/database'
 import { requireAuth } from '@/lib/auth-helpers'
+import { EmployeeUpdateSchema, parseBody } from '@/lib/schemas'
 
 type RouteContext = {
   params: Promise<{ id: string }>
@@ -37,8 +38,9 @@ export async function PATCH(
 
   try {
     const params = await context.params
-    const body = await request.json()
-    const employee = await updateEmployee(params.id, body)
+    const parsed = parseBody(EmployeeUpdateSchema, await request.json())
+    if (parsed instanceof NextResponse) return parsed
+    const employee = await updateEmployee(params.id, parsed)
 
     if (!employee) {
       return NextResponse.json({ error: 'Employee not found' }, { status: 404 })

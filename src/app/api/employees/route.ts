@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAllEmployees, addEmployee, saveEmployees } from '@/lib/database'
 import { requireAuth, canPublish } from '@/lib/auth-helpers'
+import { EmployeeCreateSchema, EmployeesBulkSchema, parseBody } from '@/lib/schemas'
 
 // GET - list employees (admin only — for editor UI; public homepage uses
 // getAllEmployees() directly server-side, not this endpoint)
@@ -23,8 +24,9 @@ export async function POST(request: NextRequest) {
   if (auth instanceof NextResponse) return auth
 
   try {
-    const body = await request.json()
-    const newEmployee = await addEmployee(body)
+    const parsed = parseBody(EmployeeCreateSchema, await request.json())
+    if (parsed instanceof NextResponse) return parsed
+    const newEmployee = await addEmployee(parsed)
 
     return NextResponse.json(newEmployee, { status: 201 })
   } catch (error) {
@@ -39,8 +41,9 @@ export async function PUT(request: NextRequest) {
   if (auth instanceof NextResponse) return auth
 
   try {
-    const employees = await request.json()
-    await saveEmployees(employees)
+    const parsed = parseBody(EmployeesBulkSchema, await request.json())
+    if (parsed instanceof NextResponse) return parsed
+    await saveEmployees(parsed)
 
     return NextResponse.json({ success: true })
   } catch (error) {

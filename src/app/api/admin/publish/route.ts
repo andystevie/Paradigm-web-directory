@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSessionFromCookie, canPublish } from '@/lib/auth-helpers'
+import { recordActivity } from '@/lib/activity-log'
+import { PublishSchema, parseBody } from '@/lib/schemas'
 import prisma from '@/lib/db'
 import { Employee } from '@/types/employee'
 
@@ -17,7 +19,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Forbidden - Super Admin only' }, { status: 403 })
     }
 
-    const { author = user.name || 'Admin' } = await request.json()
+    const parsed = parseBody(PublishSchema, await request.json().catch(() => ({})))
+    if (parsed instanceof NextResponse) return parsed
+    const author = parsed.author ?? user.name ?? 'Admin'
 
     // Get approved changes from database
     const approvedChanges = await prisma.pendingChange.findMany({
@@ -132,6 +136,13 @@ export async function POST(request: NextRequest) {
 
     // Get updated employee count
     const totalEmployees = await prisma.employee.count()
+
+    await recordActivity({
+      type: 'publish',
+      action: `Published ${approvedChanges.length} change${approvedChanges.length === 1 ? '' : 's'}`,
+      author: user.email,
+      details: `version ${versionId}`,
+    })
 
     return NextResponse.json({
       success: true,

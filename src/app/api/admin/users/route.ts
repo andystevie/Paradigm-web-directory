@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSessionFromCookie, isSuperAdmin, hashPassword } from '@/lib/auth-helpers'
+import { UserCreateSchema, UserDeleteSchema, parseBody } from '@/lib/schemas'
 import prisma from '@/lib/db'
 
 // GET - Get all users (superadmin only). passwordHash is intentionally omitted.
@@ -56,15 +57,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Forbidden - Superadmin only' }, { status: 403 })
     }
 
-    const { email, name, role, password } = await request.json()
-
-    if (!email || !name || !role || !password) {
-      return NextResponse.json({ error: 'Missing required fields (email, name, role, password)' }, { status: 400 })
-    }
-
-    if (role !== 'superadmin' && role !== 'approver' && role !== 'editor') {
-      return NextResponse.json({ error: 'Invalid role' }, { status: 400 })
-    }
+    const parsed = parseBody(UserCreateSchema, await request.json())
+    if (parsed instanceof NextResponse) return parsed
+    const { email, name, role, password } = parsed
 
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
@@ -119,11 +114,9 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Forbidden - Superadmin only' }, { status: 403 })
     }
 
-    const { id } = await request.json()
-
-    if (!id) {
-      return NextResponse.json({ error: 'User ID required' }, { status: 400 })
-    }
+    const parsed = parseBody(UserDeleteSchema, await request.json())
+    if (parsed instanceof NextResponse) return parsed
+    const { id } = parsed
 
     const userToDelete = await prisma.user.findUnique({
       where: { id }

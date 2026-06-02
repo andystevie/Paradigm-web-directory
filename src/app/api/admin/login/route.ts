@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/db'
 import { verifyPassword, setSessionCookie, hashPassword } from '@/lib/auth-helpers'
 import { getLimiter, enforce, clientId } from '@/lib/rate-limit'
+import { recordActivity } from '@/lib/activity-log'
+import { LoginSchema, parseBody } from '@/lib/schemas'
 import { UserRole } from '@/types/admin'
 
 // 10 attempts per IP per 5 minutes for login.
@@ -12,14 +14,9 @@ export async function POST(request: NextRequest) {
   if (limited) return limited
 
   try {
-    const { email, password } = await request.json()
-
-    if (!email || !password) {
-      return NextResponse.json(
-        { error: 'Email and password are required' },
-        { status: 400 }
-      )
-    }
+    const parsed = parseBody(LoginSchema, await request.json())
+    if (parsed instanceof NextResponse) return parsed
+    const { email, password } = parsed
 
     const user = await prisma.user.findFirst({
       where: {
@@ -70,6 +67,12 @@ export async function POST(request: NextRequest) {
       email: user.email,
       name: user.name,
       role: user.role as UserRole
+    })
+
+    await recordActivity({
+      type: 'login',
+      action: 'Logged in',
+      author: user.email,
     })
 
     return NextResponse.json({

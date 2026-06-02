@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSessionFromCookie, canPublish } from '@/lib/auth-helpers'
+import { recordActivity } from '@/lib/activity-log'
+import { RollbackSchema, parseBody } from '@/lib/schemas'
 import prisma from '@/lib/db'
 import { Employee } from '@/types/employee'
 
@@ -17,11 +19,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Forbidden - Super Admin only' }, { status: 403 })
     }
 
-    const { versionId, author = user.name || 'Admin' } = await request.json()
-
-    if (!versionId) {
-      return NextResponse.json({ error: 'Version ID required' }, { status: 400 })
-    }
+    const parsed = parseBody(RollbackSchema, await request.json())
+    if (parsed instanceof NextResponse) return parsed
+    const { versionId } = parsed
+    const author = parsed.author ?? user.name ?? 'Admin'
 
     // Find the version in database
     const version = await prisma.version.findFirst({
@@ -89,6 +90,13 @@ export async function POST(request: NextRequest) {
         }
       }))
     ])
+
+    await recordActivity({
+      type: 'rollback',
+      action: `Rolled back to version ${versionId}`,
+      author: user.email,
+      details: `${snapshotEmployees.length} employees restored; backup ${backupId}`,
+    })
 
     return NextResponse.json({
       success: true,
