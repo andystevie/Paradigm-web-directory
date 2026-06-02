@@ -166,8 +166,21 @@ function transformRowData(data: any, columnMapping: Record<string, string>): Nex
   return user
 }
 
+// Cap the imported file size to prevent memory-exhaustion DoS via a
+// 100MB+ CSV. 5MB is generous for a company directory; bump if needed.
+const MAX_CSV_BYTES = 5 * 1024 * 1024
+
 export function parseCSVFile(file: File): Promise<CSVImportResult> {
   return new Promise((resolve) => {
+    if (file.size > MAX_CSV_BYTES) {
+      resolve({
+        success: false,
+        data: [],
+        errors: [`CSV file is too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Limit is ${MAX_CSV_BYTES / 1024 / 1024} MB.`],
+        warnings: []
+      })
+      return
+    }
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,

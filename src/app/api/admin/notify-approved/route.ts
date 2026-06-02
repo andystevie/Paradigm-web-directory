@@ -2,9 +2,16 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/db'
 import { Resend } from 'resend'
 import { checkBearer } from '@/lib/auth-helpers'
+import { getLimiter, enforce, clientId } from '@/lib/rate-limit'
+
+// Notification cap: 12 sends per hour to keep Resend quota safe even if
+// the bearer leaks.
+const notifyLimiter = getLimiter('notify', 12, '1 h')
 
 // Called by Vercel Cron (CRON_SECRET) or manually with SYNC_SECRET.
 export async function GET(request: NextRequest) {
+  const limited = await enforce(notifyLimiter, clientId(request))
+  if (limited) return limited
   if (!checkBearer(request, [process.env.CRON_SECRET, process.env.SYNC_SECRET])) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }

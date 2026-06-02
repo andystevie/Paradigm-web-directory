@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/db'
 import { verifyPassword, setSessionCookie, hashPassword } from '@/lib/auth-helpers'
+import { getLimiter, enforce, clientId } from '@/lib/rate-limit'
 import { UserRole } from '@/types/admin'
 
+// 10 attempts per IP per 5 minutes for login.
+const loginLimiter = getLimiter('login', 10, '5 m')
+
 export async function POST(request: NextRequest) {
+  const limited = await enforce(loginLimiter, clientId(request))
+  if (limited) return limited
+
   try {
     const { email, password } = await request.json()
 

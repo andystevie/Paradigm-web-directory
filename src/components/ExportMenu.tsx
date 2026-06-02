@@ -8,6 +8,16 @@ interface ExportMenuProps {
   selectedLocation: string
 }
 
+// CSV / Excel formula-injection defense: any cell that begins with one of
+// =+-@\t\r is interpreted as a formula by Excel/LibreOffice/Sheets, so a
+// row containing `=cmd|'/c calc'!A1` would execute on open. Prepend a
+// single quote so spreadsheets render it as literal text. Also escape "".
+function escapeCsvCell(value: string): string {
+  const v = String(value ?? '')
+  const escaped = v.replace(/"/g, '""')
+  return /^[=+\-@\t\r]/.test(escaped) ? `'${escaped}` : escaped
+}
+
 export default function ExportMenu({ employees, selectedLocation }: ExportMenuProps) {
   const [isOpen, setIsOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -41,7 +51,7 @@ export default function ExportMenu({ employees, selectedLocation }: ExportMenuPr
         emp.location || '',
         emp.department || '',
         emp.title || ''
-      ].map(field => `"${field}"`).join(','))
+      ].map(field => `"${escapeCsvCell(field)}"`).join(','))
     ].join('\n')
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
@@ -73,7 +83,7 @@ export default function ExportMenu({ employees, selectedLocation }: ExportMenuPr
         emp.location || '',
         emp.department || '',
         emp.title || ''
-      ].join('\t'))
+      ].map(escapeCsvCell).join('\t'))
     ].join('\n')
 
     const blob = new Blob([csvContent], { type: 'application/vnd.ms-excel;charset=utf-8;' })

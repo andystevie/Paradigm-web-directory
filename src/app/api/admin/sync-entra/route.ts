@@ -2,10 +2,17 @@ import { NextRequest, NextResponse } from 'next/server'
 import { fetchEntraEmployees } from '@/lib/msgraph'
 import prisma from '@/lib/db'
 import { checkBearer } from '@/lib/auth-helpers'
+import { getLimiter, enforce, clientId } from '@/lib/rate-limit'
 
 export const maxDuration = 60
 
+// Sync is expensive (full Graph fetch + DB replace). Cap at 6/hour per IP
+// even with a valid bearer token, so a leaked secret can't pin Neon.
+const syncLimiter = getLimiter('sync', 6, '1 h')
+
 export async function POST(request: NextRequest) {
+  const limited = await enforce(syncLimiter, clientId(request))
+  if (limited) return limited
   if (!checkBearer(request, [process.env.SYNC_SECRET])) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
@@ -14,6 +21,8 @@ export async function POST(request: NextRequest) {
 
 // GET is used by Vercel Cron (CRON_SECRET) or manual trigger (SYNC_SECRET).
 export async function GET(request: NextRequest) {
+  const limited = await enforce(syncLimiter, clientId(request))
+  if (limited) return limited
   if (!checkBearer(request, [process.env.CRON_SECRET, process.env.SYNC_SECRET])) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }

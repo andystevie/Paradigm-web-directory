@@ -161,37 +161,6 @@ export function prepareEmployeeCards(employeeCardsSelector: string): void {
 }
 
 /**
- * Advanced multi-field search with highlighting
- */
-export function highlightSearchTerm(searchTerm: string, employeeCardsSelector: string): void {
-  if (!searchTerm) return;
-
-  const employeeCards = document.querySelectorAll(employeeCardsSelector);
-
-  employeeCards.forEach((card) => {
-    const textElements = card.querySelectorAll('.employee-name, .employee-title, .employee-department');
-
-    textElements.forEach((element) => {
-      const originalText = element.getAttribute('data-original-text') || element.textContent || '';
-
-      // Store original text if not already stored
-      if (!element.getAttribute('data-original-text')) {
-        element.setAttribute('data-original-text', originalText);
-      }
-
-      // Create highlighted version
-      const regex = new RegExp(`(${searchTerm})`, 'gi');
-      const highlightedText = originalText.replace(
-        regex,
-        '<mark style="background-color: var(--accent-color-light); padding: 2px 4px; border-radius: 3px;">$1</mark>'
-      );
-
-      element.innerHTML = highlightedText;
-    });
-  });
-}
-
-/**
  * Remove search highlighting
  */
 export function removeHighlighting(employeeCardsSelector: string): void {
