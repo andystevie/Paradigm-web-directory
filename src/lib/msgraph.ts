@@ -181,11 +181,12 @@ export async function fetchEntraEmployees(): Promise<Omit<Employee, 'id'>[]> {
   const token = await getAccessToken()
   const users = await fetchAllUsers(token)
 
-  // Dedup by email: when the same person appears as Member and Guest, keep
-  // the Member entry. Records without an email fall through into a separate
-  // list since there's nothing to dedup against.
-  const byEmail = new Map<string, { emp: Omit<Employee, 'id'>; userType: string }>()
-  const noEmail: Omit<Employee, 'id'>[] = []
+  // Dedup happens in two passes (see below): first by email, then by
+  // first+last name. The userType is carried through so the Guest/Member
+  // tiebreaker works in both passes.
+  type Item = { emp: Omit<Employee, 'id'>; userType: string }
+  const byEmail = new Map<string, Item>()
+  const noEmail: Item[] = []
 
   for (const u of users) {
     // Sign-in blocked / disabled accounts: require explicit true to be safe.
@@ -234,7 +235,7 @@ export async function fetchEntraEmployees(): Promise<Omit<Employee, 'id'>[]> {
     const userType = u.userType || 'Member'
 
     if (!email) {
-      noEmail.push(emp)
+      noEmail.push({ emp, userType })
       continue
     }
 
@@ -249,5 +250,34 @@ export async function fetchEntraEmployees(): Promise<Omit<Employee, 'id'>[]> {
     // Otherwise: keep existing (Member already wins, or both same type — first one)
   }
 
-  return [...Array.from(byEmail.values()).map((v) => v.emp), ...noEmail]
+  // Second pass: dedup by first+last name (case-insensitive). Handles the
+  // case where the same person has a Member account and a Guest account
+  // under different emails (e.g., paradigm.com vs parent-corp email).
+  // Rule: within a name group, if any Member exists, drop all Guests; else
+  // keep everyone (two distinct Members sharing a name stay separate).
+  const afterEmail: Item[] = [...Array.from(byEmail.values()), ...noEmail]
+  const byName = new Map<string, Item[]>()
+  const noNameKey: Item[] = []
+
+  for (const item of afterEmail) {
+    const first = item.emp.firstName.toLowerCase().trim()
+    const last = item.emp.lastName.toLowerCase().trim()
+    if (!first && !last) {
+      noNameKey.push(item)
+      continue
+    }
+    const key = `${first}|${last}`
+    if (!byName.has(key)) byName.set(key, [])
+    byName.get(key)!.push(item)
+  }
+
+  const result: Omit<Employee, 'id'>[] = []
+  for (const group of Array.from(byName.values())) {
+    const members = group.filter((i: Item) => i.userType === 'Member')
+    const kept = members.length > 0 ? members : group
+    result.push(...kept.map((i: Item) => i.emp))
+  }
+  result.push(...noNameKey.map((i) => i.emp))
+
+  return result
 }
