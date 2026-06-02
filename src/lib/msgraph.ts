@@ -19,6 +19,7 @@ interface GraphUser {
   mobilePhone?: string
   accountEnabled?: boolean
   proxyAddresses?: string[]
+  userType?: string // "Member" | "Guest"
 }
 
 async function getAccessToken(): Promise<string> {
@@ -68,6 +69,7 @@ async function fetchAllUsers(token: string): Promise<GraphUser[]> {
     'mobilePhone',
     'accountEnabled',
     'proxyAddresses',
+    'userType',
   ].join(',')
 
   const all: GraphUser[] = []
@@ -134,16 +136,37 @@ function parsePhone(raw?: string): { phoneNumber?: string; extension?: string } 
 }
 
 /**
+ * Names that flag admin/service accounts we never want in the directory.
+ * Matched against displayName, case-insensitive, anywhere in the string.
+ */
+const ADMIN_NAME_PATTERNS: RegExp[] = [
+  /lexcom\s*admin/i,
+]
+
+function isAdminAccount(u: GraphUser): boolean {
+  const haystack = `${u.displayName || ''} ${u.givenName || ''} ${u.surname || ''}`
+  return ADMIN_NAME_PATTERNS.some((re) => re.test(haystack))
+}
+
+/**
  * Fetch all users from Entra and return as Employee records (no id — inserted by DB)
  */
 export async function fetchEntraEmployees(): Promise<Omit<Employee, 'id'>[]> {
   const token = await getAccessToken()
   const users = await fetchAllUsers(token)
 
-  const employees: Omit<Employee, 'id'>[] = []
+  // Dedup by email: when the same person appears as Member and Guest, keep
+  // the Member entry. Records without an email fall through into a separate
+  // list since there's nothing to dedup against.
+  const byEmail = new Map<string, { emp: Omit<Employee, 'id'>; userType: string }>()
+  const noEmail: Omit<Employee, 'id'>[] = []
 
   for (const u of users) {
-    if (u.accountEnabled === false) continue
+    // Sign-in blocked / disabled accounts: require explicit true to be safe.
+    if (u.accountEnabled !== true) continue
+
+    // Filter known admin/service accounts ("Lexcom Admin", etc.)
+    if (isAdminAccount(u)) continue
 
     const firstName = u.givenName?.trim()
     const lastName = u.surname?.trim()
@@ -161,7 +184,7 @@ export async function fetchEntraEmployees(): Promise<Omit<Employee, 'id'>[]> {
     const unmangled = unmangleGuestUpn(u.userPrincipalName)
     const email = unmangled || primarySmtp || u.userPrincipalName || u.mail
 
-    employees.push({
+    const emp: Omit<Employee, 'id'> = {
       firstName: firstName || '',
       lastName: lastName || '',
       email: email || undefined,
@@ -172,8 +195,25 @@ export async function fetchEntraEmployees(): Promise<Omit<Employee, 'id'>[]> {
       team: u.department || '',
       title: u.jobTitle || undefined,
       department: u.department || undefined,
-    })
+    }
+
+    const userType = u.userType || 'Member'
+
+    if (!email) {
+      noEmail.push(emp)
+      continue
+    }
+
+    const key = email.toLowerCase()
+    const existing = byEmail.get(key)
+    if (!existing) {
+      byEmail.set(key, { emp, userType })
+    } else if (existing.userType === 'Guest' && userType === 'Member') {
+      // Replace guest entry with the matching member record
+      byEmail.set(key, { emp, userType })
+    }
+    // Otherwise: keep existing (Member already wins, or both same type — first one)
   }
 
-  return employees
+  return [...Array.from(byEmail.values()).map((v) => v.emp), ...noEmail]
 }
