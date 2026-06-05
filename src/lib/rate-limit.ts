@@ -1,45 +1,46 @@
 /**
- * Rate limiting via Upstash Redis. Falls back to a no-op when Upstash env
- * vars are missing so local dev and `next build` still work. In production,
- * set UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN in Vercel.
+ * Postgres-backed sliding-window rate limiter. Each rate-limited request
+ * inserts a row keyed by (name, identifier) and counts rows within the
+ * window. Old rows are pruned for the same key on every call so the
+ * table stays bounded.
+ *
+ * Why Postgres rather than an in-memory Map: Vercel serverless instances
+ * each have their own process memory, so a Map limiter would only catch
+ * single-instance bursts. The DB hop adds ~5-10ms per limited request,
+ * which is fine on routes that aren't hot (login, sync, notify, etc.).
  */
 
-import { Ratelimit } from '@upstash/ratelimit'
-import { Redis } from '@upstash/redis'
 import { NextRequest, NextResponse } from 'next/server'
-
-const hasUpstash = Boolean(
-  process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
-)
-
-const redis = hasUpstash ? Redis.fromEnv() : null
-
-// Cache limiter instances so each route gets one Ratelimit object, not one
-// per request.
-const cache = new Map<string, Ratelimit>()
+import prisma from './db'
 
 type Window = `${number} ${'s' | 'm' | 'h' | 'd'}`
 
-export function getLimiter(name: string, max: number, window: Window): Ratelimit | null {
-  if (!redis) return null
-  const key = `${name}:${max}:${window}`
-  let lim = cache.get(key)
-  if (!lim) {
-    lim = new Ratelimit({
-      redis,
-      limiter: Ratelimit.slidingWindow(max, window),
-      prefix: `phh-rl:${name}`,
-      analytics: false,
-    })
-    cache.set(key, lim)
-  }
-  return lim
+const UNIT_MS: Record<string, number> = {
+  s: 1000,
+  m: 60_000,
+  h: 3_600_000,
+  d: 86_400_000,
+}
+
+function parseWindow(w: Window): number {
+  const [n, unit] = w.split(' ')
+  return Number(n) * UNIT_MS[unit]
+}
+
+export interface Limiter {
+  name: string
+  max: number
+  windowMs: number
+}
+
+export function getLimiter(name: string, max: number, window: Window): Limiter {
+  return { name, max, windowMs: parseWindow(window) }
 }
 
 /**
- * Extract a best-effort client identifier from the request. Prefers the
- * first IP in X-Forwarded-For (Vercel sets this), falls back to a stable
- * "unknown" marker so we don't accidentally lump all anonymous traffic.
+ * Best-effort client identifier. Vercel sets X-Forwarded-For with the
+ * client IP first; we strip whitespace and take the first entry. Falls
+ * back to "unknown" so anonymous traffic still aggregates on one key.
  */
 export function clientId(request: NextRequest, extra?: string): string {
   const fwd = request.headers.get('x-forwarded-for') || ''
@@ -48,32 +49,40 @@ export function clientId(request: NextRequest, extra?: string): string {
 }
 
 /**
- * Enforce a rate limit and either return null (allowed) or a 429 response
- * with Retry-After set.
+ * Check + record a hit. Returns null when allowed, a 429 NextResponse when
+ * the limit has been exceeded. Fails open on DB errors — we don't want a
+ * Neon blip to take the whole site down.
  */
 export async function enforce(
-  limiter: Ratelimit | null,
+  limiter: Limiter,
   identifier: string
 ): Promise<NextResponse | null> {
-  if (!limiter) {
-    // Upstash not configured — log once and let the request through.
-    if (!warned) {
-      console.warn('[rate-limit] UPSTASH env vars missing; rate limiting disabled')
-      warned = true
+  const key = `${limiter.name}:${identifier}`
+  const cutoff = new Date(Date.now() - limiter.windowMs)
+
+  try {
+    const [, , count] = await prisma.$transaction([
+      prisma.rateLimitHit.deleteMany({ where: { key, createdAt: { lt: cutoff } } }),
+      prisma.rateLimitHit.create({ data: { key } }),
+      prisma.rateLimitHit.count({ where: { key } }),
+    ])
+
+    if (count > limiter.max) {
+      const oldest = await prisma.rateLimitHit.findFirst({
+        where: { key },
+        orderBy: { createdAt: 'asc' },
+      })
+      const retryAfter = oldest
+        ? Math.max(1, Math.ceil((oldest.createdAt.getTime() + limiter.windowMs - Date.now()) / 1000))
+        : Math.ceil(limiter.windowMs / 1000)
+      return NextResponse.json(
+        { error: 'Too many requests' },
+        { status: 429, headers: { 'Retry-After': String(retryAfter) } }
+      )
     }
     return null
+  } catch (e) {
+    console.error('Rate limit DB error (fail-open):', e)
+    return null
   }
-  const { success, reset, remaining } = await limiter.limit(identifier)
-  if (!success) {
-    const retryAfter = Math.max(1, Math.ceil((reset - Date.now()) / 1000))
-    return NextResponse.json(
-      { error: 'Too many requests' },
-      { status: 429, headers: { 'Retry-After': String(retryAfter) } }
-    )
-  }
-  // Hint clients about remaining budget for observability.
-  return null
-  void remaining
 }
-
-let warned = false

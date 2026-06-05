@@ -68,6 +68,16 @@ model PendingChange {
   @@index([proposedAt])
 }
 
+// Per-key rate-limit hits — sliding-window counter. Old rows are pruned
+// lazily by the limiter on each call so the table stays bounded.
+model RateLimitHit {
+  id        String   @id @default(cuid())
+  key       String
+  createdAt DateTime @default(now())
+
+  @@index([key, createdAt])
+}
+
 // Audit/activity log
 model ActivityLog {
   id        String   @id @default(cuid())
