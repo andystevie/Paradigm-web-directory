@@ -6,6 +6,7 @@ import { REGIONS, ALL_LOCATIONS, getRegionForLocation } from '@/lib/locations'
 import LocationTabs from './LocationTabs'
 import ExportMenu from './ExportMenu'
 import ThemeToggle from './ThemeToggle'
+import LogoutButton from './LogoutButton'
 
 interface AppleDirectoryViewProps {
   employees: Employee[]
@@ -127,6 +128,7 @@ export default function AppleDirectoryView({ employees }: AppleDirectoryViewProp
                 employees={filteredEmployees}
                 selectedLocation={selectedLocation}
               />
+              <LogoutButton />
             </div>
           </div>
 
